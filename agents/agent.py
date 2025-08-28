@@ -93,7 +93,7 @@ def deploy_agent_engine_app():
             "python-dotenv>=1.0.1",
             "google-adk==1.13.0",
             "google-cloud-aiplatform[adk,agent-engines]==1.110.0"
-        ],
+        ]
     }
 
     existing_agents = list(

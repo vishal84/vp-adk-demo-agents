@@ -19,6 +19,7 @@ dependencies = [
 
 [tool.setuptools]
 packages = ["agents"]
+package-dir = {"" = ""}
 
 [project.scripts]
 agent-app = "agents.agent:deploy_agent_engine_app"
