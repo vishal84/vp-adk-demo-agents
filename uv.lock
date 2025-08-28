@@ -1388,9 +1388,9 @@ wheels = [
 ]
 
 [[package]]
-name = "vishals-adk-demo-agents"
+name = "vp-adk-demo-agents"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "google-adk" },
     { name = "google-cloud-aiplatform", extra = ["adk", "agent-engines"] },

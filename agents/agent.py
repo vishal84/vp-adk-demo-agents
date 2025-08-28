@@ -27,10 +27,7 @@ OAUTH_AUTH_URL = os.environ.get("OAUTH_AUTH_URL")
 OAUTH_TOKEN_URL = str(os.environ.get("OAUTH_TOKEN_URL"))
 OAUTH_CLIENT_ID = os.environ.get("OAUTH_CLIENT_ID")
 OAUTH_CLIENT_SECRET = os.environ.get("OAUTH_CLIENT_SECRET")
-SCOPES = [
-    "openid",
-    "https://www.googleapis.com/auth/cloud-platform",
-]
+SCOPES = os.environ.get("SCOPES")
 
 # Load GCP Project ID
 GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
@@ -40,7 +37,7 @@ MODEL_ID = os.getenv("MODEL_ID")
 AGENT_DISPLAY_NAME = os.getenv("AGENT_DISPLAY_NAME")
 AUTH_ID = os.getenv("AUTH_ID")
 
-# Key to store creds in the cache (ToolContext)
+# Key to retrieve/store creds in the cache (state)
 TOKEN_KEY = f"temp:{AUTH_ID}"
 
 def whoami(callback_context: CallbackContext, creds):
@@ -76,6 +73,7 @@ root_agent = LlmAgent(
     before_agent_callback=[auth_setup]
 )
 
+
 def deploy_agent_engine_app():
     app = reasoning_engines.AdkApp(
         agent=root_agent,
@@ -91,8 +89,7 @@ def deploy_agent_engine_app():
     agent_config = {
         "agent_engine": app,
         "display_name": AGENT_DISPLAY_NAME,
-        "requirements": "requirements.txt",
-        # "extra_packages": [".env"]
+        "requirements": os.path.abspath(os.path.join(os.path.dirname(__file__), "requirements.txt")),
     }
 
     existing_agents = list(
@@ -112,7 +109,6 @@ def deploy_agent_engine_app():
         remote_app = agent_engines.create(**agent_config)
 
     return None
-
 
 if __name__ == "__main__":
     deploy_agent_engine_app()
