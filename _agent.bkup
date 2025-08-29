@@ -1,24 +1,13 @@
-
-import datetime
-import json
 import os
 from typing import Any, Dict
 
 from dotenv import load_dotenv
-from fastapi.openapi.models import OAuth2
-from fastapi.openapi.models import OAuthFlowAuthorizationCode
-from fastapi.openapi.models import OAuthFlows
-
-import vertexai
-from vertexai.preview import reasoning_engines
-from vertexai import agent_engines
 
 from google.adk.agents import LlmAgent
 from google.adk.tools.tool_context import ToolContext
 from google.adk.agents.callback_context import CallbackContext
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-
 
 load_dotenv()
 
@@ -72,47 +61,3 @@ root_agent = LlmAgent(
     tools=[output_user_info],
     before_agent_callback=[auth_setup]
 )
-
-
-def deploy_agent_engine_app():
-    app = reasoning_engines.AdkApp(
-        agent=root_agent,
-        enable_tracing=True,
-    )
-
-    vertexai.init(
-        project=GOOGLE_CLOUD_PROJECT,
-        location=GOOGLE_CLOUD_LOCATION,
-        staging_bucket=STAGING_BUCKET,
-    )
-
-    agent_config = {
-        "agent_engine": app,
-        "display_name": AGENT_DISPLAY_NAME,
-        "requirements": [
-            "python-dotenv>=1.0.1",
-            "google-adk==1.13.0",
-            "google-cloud-aiplatform[adk,agent-engines]==1.110.0"
-        ]
-    }
-
-    existing_agents = list(
-        agent_engines.list(filter=f'display_name="{AGENT_DISPLAY_NAME}"'))
-
-    if existing_agents:
-        print(f"Number of existing agents found for {AGENT_DISPLAY_NAME}:" + str(
-            len(list(existing_agents))))
-        print(existing_agents[0].resource_name)
-
-    if existing_agents:
-        # update the existing agent
-        remote_app = agent_engines.update(
-            resource_name=existing_agents[0].resource_name, **agent_config)
-    else:
-        # create a new agent
-        remote_app = agent_engines.create(**agent_config)
-
-    return None
-
-if __name__ == "__main__":
-    deploy_agent_engine_app()
