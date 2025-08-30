@@ -13,8 +13,10 @@ GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
 GOOGLE_CLOUD_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION")
 STAGING_BUCKET = os.getenv("STAGING_BUCKET")
 AGENT_DISPLAY_NAME = os.getenv("AGENT_DISPLAY_NAME")
-AUTH_ID = os.getenv("AUTH_ID")
 
+AUTH_ID = os.getenv("AUTH_ID")
+OAUTH_CLIENT_ID = os.getenv("OAUTH_CLIENT_ID")
+OAUTH_CLIENT_SECRET = os.getenv("OAUTH_CLIENT_SECRET")
 
 app = reasoning_engines.AdkApp(
     agent=root_agent,
@@ -31,10 +33,18 @@ agent_config = {
     "agent_engine": app,
     "display_name": AGENT_DISPLAY_NAME,
     "requirements": [
-        "python-dotenv>=1.0.1",
-        "google-adk==1.13.0",
-        "google-cloud-aiplatform[adk,agent-engines]==1.110.0"
-    ]
+        "google-cloud-aiplatform[adk,agent_engines]",
+        "dotenv",
+        "google-auth-oauthlib"
+    ],
+    "extra_packages": [
+        "agent.py"
+    ],
+    "env_vars": {
+        "STAGING_BUCKET": f"{STAGING_BUCKET}",
+        "OAUTH_CLIENT_ID": f"{OAUTH_CLIENT_ID}",
+        "OAUTH_CLIENT_SECRET": f"{OAUTH_CLIENT_SECRET}",
+    }
 }
 
 existing_agents = list(
