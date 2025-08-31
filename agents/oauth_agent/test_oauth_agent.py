@@ -1,7 +1,7 @@
 import os
 import sys
 import vertexai
-import agent
+import agents.oauth_agent.agent_as as agent_as
 from vertexai.preview import reasoning_engines
 from dotenv import load_dotenv
 
@@ -30,7 +30,7 @@ vertexai.init(
 print(f"Connecting to agent: {OAUTH_ENGINE_ID}...")
 
 app = reasoning_engines.AdkApp(
-    agent=agent.root_agent,
+    agent=agent_as.root_agent,
     enable_tracing=True,
 )
 
@@ -39,7 +39,7 @@ print("Connection successful! 🚀")
 # --- Set up a Session ID ---
 # Create the session and extract its string ID
 session_obj = app.create_session(user_id="u_123")
-session_id = session_obj.id # <--- FIX: Access the 'id' attribute of the session object
+session_id = session_obj.id
 
 print(f"Using Session ID: {session_id}")
 print("-" * 30)
@@ -48,7 +48,7 @@ print("-" * 30)
 try:
     for event in app.stream_query(
         user_id="u_123",
-        session_id=session_id, # <--- Now passing the string ID
+        session_id=session_id,
         message="how are you bro?",
     ):
         print(event)
