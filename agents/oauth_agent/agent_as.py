@@ -1,6 +1,6 @@
 import os
-from typing import Any, Dict
-
+from json import load
+from re import L
 from dotenv import load_dotenv
 
 from google.adk.agents import LlmAgent
@@ -22,6 +22,7 @@ SCOPES = os.environ.get("SCOPES")
 GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
 GOOGLE_CLOUD_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION")
 STAGING_BUCKET = os.getenv("STAGING_BUCKET")
+
 MODEL_ID = os.getenv("MODEL_ID")
 AGENT_DISPLAY_NAME = os.getenv("AGENT_DISPLAY_NAME")
 AUTH_ID = os.getenv("AUTH_ID")
@@ -48,10 +49,10 @@ def output_user_info(tool_context: ToolContext):
     print(f"User's email address: {user_email}")
     return user_email
 
-# Root agent delegates to the sub-agent (follow sample pattern)
+# Define the root agent for your application
 root_agent = LlmAgent(
-    model=str(MODEL_ID),
     name="root_agent",
+    model=f"{MODEL_ID}",
     instruction="""
     You are a helpful end user authentication agent.
 
