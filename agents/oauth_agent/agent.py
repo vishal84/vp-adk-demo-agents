@@ -66,7 +66,6 @@ if missing_vars:
 # Key to retrieve/store creds in the session state.
 TOKEN_STATE_KEY = "oauth_tool_tokens"
 
-
 # --- Initialize Vertex AI ---
 vertexai.init(
     project=GOOGLE_CLOUD_PROJECT,
@@ -80,6 +79,7 @@ print(f"Vertex AI initialized for project {GOOGLE_CLOUD_PROJECT} in {GOOGLE_CLOU
 def _get_user_email_from_creds(creds: Credentials) -> str | None:
     """Fetches user email using provided Google OAuth credentials."""
     try:
+        print(f"access token ", creds.token)
         user_info_service = build('oauth2', 'v2', credentials=creds)
         user_info = user_info_service.userinfo().get().execute()
         return user_info.get('email')
@@ -261,6 +261,42 @@ def get_user_email_tool(tool_context: ToolContext):
         print("Tool: User email not found in state. Authentication might be required.")
         return {"result": "I don't have your email address. Have you authenticated yet? Please ask me to authenticate you first."}
 
+# --- TOOL: get_user_access_token_tool ---
+def get_user_access_token_tool(tool_context: ToolContext):
+    """
+    Retrieves the authenticated user's access token from the session state.
+    This tool should be called by the agent if it needs to provide the access token
+    to the user or use it in another context (though direct use by agent is rare).
+    """
+    print("\n--- Running get_user_access_token_tool ---")
+    # This will retrieve the dictionary directly, not a JSON string.
+    stored_tokens = tool_context.state.get(TOKEN_STATE_KEY)
+
+    if stored_tokens: # Now 'stored_tokens' is already the dictionary
+        try:
+            # NO! Don't use json.loads() here. 'stored_tokens' is already a dict.
+            # stored_tokens = json.loads(stored_tokens)
+            
+            # Reconstruct Credentials object to access its token attribute
+            creds = Credentials.from_authorized_user_info(
+                stored_tokens,
+                SCOPES_LIST
+            )
+            
+            if creds.valid:
+                # Access the access token from the Credentials object
+                access_token = creds.token
+                print(f"Tool: Retrieved access token: {access_token[:10]}... (truncated)")
+                return {"result": f"Your access token is: `{access_token}`"}
+            else:
+                print("Tool: Stored credentials are not valid. Please re-authenticate.")
+                return {"result": "Your session has expired or is invalid. Please authenticate again."}
+        except Exception as e:
+            print(f"Tool: Error retrieving access token from state: {e}", file=sys.stderr)
+            return {"result": "Error retrieving access token. Please check the agent's logs."}
+    else:
+        print("Tool: No authentication tokens found in state.")
+        return {"result": "You are not authenticated. Please authenticate first to get an access token."}
 
 # --- Define the Root Agent ---
 root_agent = LlmAgent(
@@ -277,11 +313,13 @@ root_agent = LlmAgent(
 
     When the user first interacts, or if they explicitly ask to authenticate, log in, or verify their identity, you must use the `authenticate_user_tool` to guide them through the OAuth process.
     Once successfully authenticated, or if you already know their email from the context, you can use the `get_user_email_tool` to display or confirm their email address.
+    You can also use the `get_user_access_token_tool` to retrieve the user's access token, if they ask for it.
     If the user is already authenticated, you should confirm their email or state that they are already logged in.
     """,
     tools=[
         authenticate_user_tool,
-        get_user_email_tool
+        get_user_email_tool,
+        get_user_access_token_tool,
     ],
     before_agent_callback=[prereq_setup]
 )
