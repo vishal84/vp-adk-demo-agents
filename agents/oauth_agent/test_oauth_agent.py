@@ -1,9 +1,10 @@
 import os
 import sys
 import vertexai
-import agents.oauth_agent.agent_as as agent_as
 from vertexai.preview import reasoning_engines
 from dotenv import load_dotenv
+
+from .agent_as import root_agent
 
 # Load environment variables from your .env file
 load_dotenv()
@@ -30,7 +31,7 @@ vertexai.init(
 print(f"Connecting to agent: {OAUTH_ENGINE_ID}...")
 
 app = reasoning_engines.AdkApp(
-    agent=agent_as.root_agent,
+    agent=root_agent,
     enable_tracing=True,
 )
 
@@ -49,7 +50,7 @@ try:
     for event in app.stream_query(
         user_id="u_123",
         session_id=session_id,
-        message="how are you bro?",
+        message="Hi, log me in?",
     ):
         print(event)
 except Exception as e:

@@ -4,7 +4,7 @@ from vertexai import agent_engines
 from vertexai.preview import reasoning_engines
 from dotenv import load_dotenv
 
-from agents.oauth_agent.agent_as import root_agent
+from .agent_as import root_agent
 
 load_dotenv()
 
