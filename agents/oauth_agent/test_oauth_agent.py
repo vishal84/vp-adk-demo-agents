@@ -49,7 +49,7 @@ try:
     for event in app.stream_query(
         user_id="u_123",
         session_id=session_id,
-        message="how are you bro?",
+        message="Hi, log me in?",
     ):
         print(event)
 except Exception as e:
