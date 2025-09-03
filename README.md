@@ -1,4 +1,4 @@
-# Vishal's ADK Demo Agents README
+# ADK Demo Agents
 
 ## Agents
 
