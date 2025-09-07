@@ -63,6 +63,12 @@ if missing_vars:
     print("Please check your .env file and ensure all variables are set.", file=sys.stderr)
     sys.exit(1)
 
+print(f"--- OAuth2 Debug Info ---")
+print(f"OAUTH_CLIENT_ID: {OAUTH_CLIENT_ID}")
+print("Please ensure your Google Cloud OAuth 2.0 Client ID is configured with the correct redirect URIs.")
+print("For local development with 'adk web', the redirect URI is typically 'http://localhost:8080/oauth2/callback'.")
+print("--- End OAuth2 Debug Info ---")
+
 # Key to retrieve/store creds in the session state.
 TOKEN_STATE_KEY = "oauth_tool_tokens"
 
