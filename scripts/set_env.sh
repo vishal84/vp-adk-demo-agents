@@ -1,10 +1,10 @@
 #!/bin/bash
 
-GOOGLE_CLOUD_PROJECT="gsi-agentspace"
-GOOGLE_CLOUD_LOCATION="us-central1"
+GOOGLE_CLOUD_PROJECT="insert project id here"
+GOOGLE_CLOUD_LOCATION="insert region (i.e. us-east1, us-central1) here"
 GOOGLE_GENAI_USE_VERTEXAI=True
 MODEL_ID="gemini-2.5-flash"
-OAUTH_CLIENT_ID="7546770736124264448-2v1bqv5n7u5b4j3n1f6j3k7r4g5h6i7j.apps.googleusercontent.com"
-OAUTH_CLIENT_SECRET="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6i"
+OAUTH_CLIENT_ID="insert client id here"
+OAUTH_CLIENT_SECRET="insert client secret here"
 LOCAL_DEV=TRUE
 GOOGLE_APPLICATION_CREDENTIALS="$(pwd)/mcp-server-sa.json"
