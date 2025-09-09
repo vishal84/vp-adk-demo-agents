@@ -109,8 +109,45 @@ http://127.0.0.1:8000/
 5. Once `adk web` loads, select the `mcp_client_agent`  from the top drop down to begin a session.
 ![select agent](img/select_agent.png)
 
+#### Chat with the `mcp_client_agent`
 
+Start a chat session with the agent:
 
+1. Prompt:
+```diff
+# hi, what can you do?
++ I can help you authenticate via Google OAuth2 to retrieve your profile information, specifically your email address. Once you're authenticated, I can use the MCP toolset to answer your questions. (sample output...)
+```
 
+2. Prompt:
+```diff
+# please authenticate me.
++ (the agent opens a dialog to allow the end user to enter their credentials)
+```
+You will need to authenticate with a user that has access to the Google Cloud project you are working in. Select the account you want to use with the agent and enter your credentials to authenticate.
 
-export GOOGLE_APPLICATION_CREDENTIALS=~/.config/gcloud/application_default_credentials.json
+![end user authentication](img/end_user_authentication.png)
+
+3. Prompt:
+```diff
+# what mcp tools can you access?
++ I can help you with information about the animals in the zoo! I can:
++   * Retrieve all animals of a specific species: For example, I can tell you about all the lions or all the penguins.
++   * Get details of a specific animal: If you give me an animal's name, I can tell you its species, age, enclosure, and trail.
+```
+
+4. Prompt:
+```diff
+# how many penguins are in the zoo?
++ There are 6 penguins in the zoo! Their names are Waddles, Pip, Skipper, Chilly, Pingu, and Noot.
+```
+
+5. Prompt:
+```diff
+# tell me about Waddles
++ Waddles is a 2-year-old penguin. You can find Waddles in The Arctic Exhibit, along the Polar Path.
+```
+
+![agent prompts](img/agent_prompts.png)
+
+<!-- export GOOGLE_APPLICATION_CREDENTIALS=~/.config/gcloud/application_default_credentials.json -->
