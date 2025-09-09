@@ -1,6 +1,9 @@
 # ADK Demo Agents
 
 ## Running the MCP Client Agent 
+An example MCP client agent that uses an MCP server deployed to Cloud Run, secured by authentication, requiring an identity token to access.
+
+This tutorial is based off of the Codelab provided here: https://codelabs.developers.google.com/codelabs/cloud-run/use-mcp-server-on-cloud-run-with-an-adk-agent#0
 
 ### Prerequisite Setup in your GCP Project
 
@@ -73,32 +76,39 @@ Click __Save__.
 
 5. In the resulting modal dialog ensure `JSON` is selected then click __Create__. Give the file a familiar name such as `mcp-server-sa.json` and select the location to download the key file to your local machine. Note the path to the service account file as it will be used when starting the agent locally.
 
+### Running the MCP Client Agent locally with `adk web`
 
+To run the `mcp_client_agent` locally for development, from the project root run the following:
 
-To run the sample ADK agents in this project you must navigate to the `/agents` directory.
+1. Place the service account key file downloaded earlier in the `/scripts` directory. Then navigate to the `/scripts` directory from the project root. You will need to enter the `OAUTH_CLIENT_ID` and `OAUTH_CLIENT_SECRET` created earlier into this file to run the sample as well as other required project variables including the `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` variables:
 
-### Running the Agent Locally with `adk web`
+```bash
+cd scripts/
+chmod +x set_env.sh
+source set_env.sh
+```
 
-To run the `oauth_agent` locally for development:
+2. Navigate to the `/agents` directory from the project root and run `uv sync` to install agent dependencies:
+```bash
+cd ../agents/
+uv sync
+```
 
-1.  **Navigate to the `agents` directory.**
-    ```bash
-    cd agents
-    ```
+### Start the MCP Client Agent using `adk web`
+To run the agent run the following command:
 
-2.  **Set the `LOCAL_DEV` environment variable to `TRUE`.** This ensures the agent runs with the local development configuration.
-    ```bash
-    export LOCAL_DEV=TRUE
-    ```
+```bash
+uv run adk web
+```
 
-3.  **Start the ADK development server.**
-    ```bash
-    uv run adk web
-    ```
+4.  After the server starts up you can access the `/dev-ui` for `adk web` at:
+```
+http://127.0.0.1:8000/
+``` 
 
-4.  **Open the ADK web interface** in your browser (usually at `http://localhost:8080`).
+5. Once `adk web` loads, select the `mcp_client_agent`  from the top drop down to begin a session.
+![select agent](img/select_agent.png)
 
-5.  **Select the `oauth_agent` folder** from the agent selection UI to start the agent.
 
 
 

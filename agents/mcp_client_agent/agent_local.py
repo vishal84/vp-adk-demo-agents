@@ -54,7 +54,6 @@ SCOPES_LIST = list(SCOPES_DICT.keys())
 # Load GCP Project ID
 GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
 GOOGLE_CLOUD_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION")
-STAGING_BUCKET = os.getenv("STAGING_BUCKET")
 
 MODEL_ID = os.getenv("MODEL_ID")
 
@@ -64,7 +63,6 @@ required_vars = {
     "OAUTH_CLIENT_SECRET": OAUTH_CLIENT_SECRET,
     "GOOGLE_CLOUD_PROJECT": GOOGLE_CLOUD_PROJECT,
     "GOOGLE_CLOUD_LOCATION": GOOGLE_CLOUD_LOCATION,
-    "STAGING_BUCKET": STAGING_BUCKET,
     "MODEL_ID": MODEL_ID,
 }
 missing_vars = [name for name, value in required_vars.items() if not value]
@@ -86,7 +84,6 @@ TOKEN_STATE_KEY = "oauth_tool_tokens"
 vertexai.init(
     project=GOOGLE_CLOUD_PROJECT,
     location=GOOGLE_CLOUD_LOCATION,
-    staging_bucket=STAGING_BUCKET,
 )
 print(f"Vertex AI initialized for project {GOOGLE_CLOUD_PROJECT} in {GOOGLE_CLOUD_LOCATION}.")
 
