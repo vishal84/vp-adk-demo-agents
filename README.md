@@ -13,7 +13,21 @@ Once your Cloud Run MCP Server is deployed, to use the **MCP Client Agent** exam
 
 1. Navigate to your Google Cloud project and open a new __Cloud Shell__ terminal. Run the following command once the terminal comes up (you may be asked to __Authorize__ the account being used in the terminal):
 ```
-gcloud services enable aiplatform.googleapis.com artifactregistry.googleapis.com bigquery.googleapis.com cloudbuild.googleapis.com cloudresourcemanager.googleapis.com compute.googleapis.com containerregistry.googleapis.com discoveryengine.googleapis.com iam.googleapis.com iamcredentials.googleapis.com logging.googleapis.com monitoring.googleapis.com notebooks.googleapis.com run.googleapis.com storage.googleapis.com
+gcloud services enable aiplatform.googleapis.com \
+    artifactregistry.googleapis.com \
+    bigquery.googleapis.com \
+    cloudbuild.googleapis.com \
+    cloudresourcemanager.googleapis.com \
+    compute.googleapis.com \
+    containerregistry.googleapis.com \
+    discoveryengine.googleapis.com \
+    iam.googleapis.com \
+    iamcredentials.googleapis.com \
+    logging.googleapis.com \
+    monitoring.googleapis.com \
+    notebooks.googleapis.com \
+    run.googleapis.com \
+    storage.googleapis.com
 ```
 
 2. Navigate to your Google Cloud project and select __Left Menu__ > __APIs & Services__ > __OAuth consent screen__.
