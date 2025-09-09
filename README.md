@@ -1,5 +1,8 @@
 # ADK Demo Agents
 
+This repository hosts examples of AI agents built using the Agent Develompent Kit (ADK) framework.
+
+
 ## Running the MCP Client Agent 
 An example MCP client agent that uses an MCP server deployed to Cloud Run, secured by authentication, requiring an identity token to access.
 
@@ -7,11 +10,11 @@ This tutorial is based off of the Codelab provided here: https://codelabs.develo
 
 ### Prerequisite Setup in your GCP Project
 
-This agent depends on an MCP Server deployed to Cloud Run within your Google Cloud project. You can follow the tutorial at the link provided to deploy the [MCP Server on Cloud Run](https://github.com/vishal84/mcp-server-cloud-run).
+Enable the required services to run this tutorial:
+1. Navigate to your Google Cloud project and open a new __Cloud Shell__ terminal. 
+![cloud shell](img/cloud_shell.png)
 
-Once your Cloud Run MCP Server is deployed, to use the **MCP Client Agent** example, you must first register an application with your OAuth 2.0 provider. Google Cloud can provide OAuth 2.0 support for applications and is used in this tutorial. To register an OAuth 2.0 application do the following:
-
-1. Navigate to your Google Cloud project and open a new __Cloud Shell__ terminal. Run the following command once the terminal comes up (you may be asked to __Authorize__ the account being used in the terminal):
+Run the following command once the terminal comes up (you may be asked to __Authorize__ the account being used in the terminal):
 ```
 gcloud services enable aiplatform.googleapis.com \
     artifactregistry.googleapis.com \
@@ -29,6 +32,10 @@ gcloud services enable aiplatform.googleapis.com \
     run.googleapis.com \
     storage.googleapis.com
 ```
+
+This agent depends on an MCP Server deployed to Cloud Run within your Google Cloud project. You can follow the tutorial at the link provided to deploy the [MCP Server on Cloud Run](https://github.com/vishal84/mcp-server-cloud-run).
+
+Once your Cloud Run MCP Server is deployed, to use the **MCP Client Agent** example, you must first register an application with an OAuth 2.0 provider. Google Cloud can provide OAuth 2.0 support for applications and is used in this tutorial. To register an OAuth 2.0 application do the following:
 
 2. Navigate to your Google Cloud project and select __Left Menu__ > __APIs & Services__ > __OAuth consent screen__.
 
@@ -82,7 +89,6 @@ You will need to add required permissions to the service account for it to perfo
 1. In the __Actions__ column click the `...` elipses and select __Manage permissions__.
 
 2. Click the __Manage Access__ button and add the following three roles to service account in the __Assign roles__ modal:
-
 * `Vertex AI User`
 * `Cloud Run Invoker`
 * `Logs Writer`
@@ -108,6 +114,7 @@ source set_env.sh
 ```
 
 2. Navigate to the `/agents` directory from the project root and run `uv sync` to install agent dependencies:
+
 ```bash
 cd ../agents/
 uv sync
@@ -121,6 +128,7 @@ uv run adk web
 ```
 
 4.  After the server starts up you can access the `/dev-ui` for `adk web` at:
+
 ```
 http://127.0.0.1:8000/
 ``` 
