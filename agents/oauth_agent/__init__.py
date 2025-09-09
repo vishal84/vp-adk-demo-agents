@@ -1,6 +1,6 @@
 import os
 
-if os.getenv("LOCAL_DEV", "False").lower() in ("true", "1", "t"):
-    from . import agent_as
+if os.getenv("LOCAL_DEV", "TRUE").lower() in ("true", "1", "t"):
+    from .agent_local import root_agent
 else:
-    from . import agent_local
+    from .agent_as import root_agent
