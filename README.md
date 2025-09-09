@@ -11,19 +11,24 @@ This agent depends on an MCP Server deployed to Cloud Run within your Google Clo
 
 Once your Cloud Run MCP Server is deployed, to use the **MCP Client Agent** example, you must first register an application with your OAuth 2.0 provider. Google Cloud can provide OAuth 2.0 support for applications and is used in this tutorial. To register an OAuth 2.0 application do the following:
 
-1. Navigate to your Google Cloud project and select __Left Menu__ > __APIs & Services__ > __OAuth consent screen__.
+1. Navigate to your Google Cloud project and open a new __Cloud Shell__ terminal. Run the following command once the terminal comes up (you may be asked to __Authorize__ the account being used in the terminal):
+```
+gcloud services enable aiplatform.googleapis.com artifactregistry.googleapis.com bigquery.googleapis.com cloudbuild.googleapis.com cloudresourcemanager.googleapis.com compute.googleapis.com containerregistry.googleapis.com discoveryengine.googleapis.com iam.googleapis.com iamcredentials.googleapis.com logging.googleapis.com monitoring.googleapis.com notebooks.googleapis.com run.googleapis.com storage.googleapis.com
+```
 
-2. Click __Get Started__.
+2. Navigate to your Google Cloud project and select __Left Menu__ > __APIs & Services__ > __OAuth consent screen__.
 
-3. Give your application a name i.e. `MCP Client Agent` and supply an email address. Click __Next__.
+3. Click __Get Started__.
 
-4. Select `External` for the Audience. Click __Next__.
+4. Give your application a name i.e. `MCP Client Agent` and supply an email address. Click __Next__.
 
-5. Use the same email address for the __Contact Information__ section and click __Next__.
+5. Select `External` for the Audience. Click __Next__.
 
-6. Select the `I agree` checkbox and click __Continue__.
+6. Use the same email address for the __Contact Information__ section and click __Next__.
 
-7. Click __Create__ to finish the OAuth consent setup.
+7. Select the `I agree` checkbox and click __Continue__.
+
+8. Click __Create__ to finish the OAuth consent setup.
 
 Once OAuth 2.0 consent has been established in your Google Cloud project you can register an OAuth 2.0 client.
 
