@@ -1,5 +1,8 @@
 # ADK Demo Agents
 
+This repository hosts examples of AI agents built using the Agent Develompent Kit (ADK) framework.
+
+
 ## Running the MCP Client Agent 
 An example MCP client agent that uses an MCP server deployed to Cloud Run, secured by authentication, requiring an identity token to access.
 
