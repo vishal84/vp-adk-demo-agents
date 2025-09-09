@@ -54,7 +54,6 @@ SCOPES_LIST = list(SCOPES_DICT.keys())
 # Load GCP Project ID
 GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
 GOOGLE_CLOUD_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION")
-STAGING_BUCKET = os.getenv("STAGING_BUCKET")
 
 MODEL_ID = os.getenv("MODEL_ID")
 
@@ -64,7 +63,6 @@ required_vars = {
     "OAUTH_CLIENT_SECRET": OAUTH_CLIENT_SECRET,
     "GOOGLE_CLOUD_PROJECT": GOOGLE_CLOUD_PROJECT,
     "GOOGLE_CLOUD_LOCATION": GOOGLE_CLOUD_LOCATION,
-    "STAGING_BUCKET": STAGING_BUCKET,
     "MODEL_ID": MODEL_ID,
 }
 missing_vars = [name for name, value in required_vars.items() if not value]
@@ -86,7 +84,6 @@ TOKEN_STATE_KEY = "oauth_tool_tokens"
 vertexai.init(
     project=GOOGLE_CLOUD_PROJECT,
     location=GOOGLE_CLOUD_LOCATION,
-    staging_bucket=STAGING_BUCKET,
 )
 print(f"Vertex AI initialized for project {GOOGLE_CLOUD_PROJECT} in {GOOGLE_CLOUD_LOCATION}.")
 
@@ -265,22 +262,7 @@ def authenticate_user_tool(tool_context: ToolContext):
         print("Auth Tool: Authentication process incomplete or failed after all attempts.")
         return {"result": "Authentication process incomplete or failed. Please try again."}
 
-# --- Tool: get_user_email_tool ---
-def get_user_email_tool(tool_context: ToolContext):
-    """
-    Outputs the authenticated user's email address from the session state.
-    This tool should be called by the agent after successful authentication.
-    """
-    print("\n--- Running get_user_email_tool ---")
-    user_email = tool_context.state.get('_user_email')
-
-    if user_email and user_email != "Not authenticated": # Check for default value
-        print(f"Tool: Retrieved user email: {user_email}")
-        return {"result": f"Your authenticated email address is: {user_email}"}
-    else:
-        print("Tool: User email not found in state. Authentication might be required.")
-        return {"result": "I don't have your email address. Have you authenticated yet? Please ask me to authenticate you first."}
-
+# --- Define the MCP Toolset ---
 def get_id_token():
     """Get an ID token to authenticate with the MCP server."""
     target_url = "https://zoo-mcp-server-505636788486.us-central1.run.app/mcp/"
@@ -298,6 +280,7 @@ mcp_tools = McpToolset(
     )
 )
 
+# --- Define the Agents and Sub-Agents ---
 zoo_mcp_tool_agent = Agent(
     name="zoo_mcp_tool_agent",
     model=str(MODEL_ID),
@@ -327,8 +310,6 @@ root_agent = LlmAgent(
     - User's email (if authenticated): {{{{_user_email}}}}
 
     When the user first interacts, or if they explicitly ask to authenticate, log in, or verify their identity, you must call ONLY the `authenticate_user_tool` to guide them through the OAuth process. Do not call any other tool until authentication is complete.
-    Only after successful authentication (when you know the user is authenticated), you may call `get_user_email_tool` to display or confirm their email address, but do not call it immediately after authentication unless the user requests their email.
-    You can use `get_user_access_token_tool` to retrieve the user's access token or id token, but only if the user asks for it.
     If the user is already authenticated, you should confirm their email or state that they are already logged in, but do not call authentication again.
     Use the `zoo_mcp_tool_agent` to interact with the Zoo MCP server after authentication is complete.
     """,
@@ -337,7 +318,6 @@ root_agent = LlmAgent(
     ],
     tools=[
         authenticate_user_tool,
-        get_user_email_tool,
     ],
     before_agent_callback=[prereq_setup],
 )
