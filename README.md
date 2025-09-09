@@ -1,6 +1,6 @@
 # ADK Demo Agents
 
-## Agents
+## Running the MCP Client Agent 
 
 To run the sample ADK agents in this project you must navigate to the `/agents` directory.
 
