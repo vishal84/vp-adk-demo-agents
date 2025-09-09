@@ -38,7 +38,7 @@ agent_config = {
         "google-auth-oauthlib"
     ],
     "extra_packages": [
-        "agent.py"
+        "agent_as.py"
     ],
     "env_vars": {
         "STAGING_BUCKET": f"{STAGING_BUCKET}",
