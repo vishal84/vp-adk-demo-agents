@@ -1,23 +1,33 @@
 import os
 import json
 import sys
+import google.cloud.logging
 from datetime import datetime
 import time
 
 from dotenv import load_dotenv
 
-from fastapi.openapi.models import OAuth2, OAuthFlowAuthorizationCode, OAuthFlows
 import vertexai
 from vertexai.preview import reasoning_engines
 
-from google.adk.agents import LlmAgent
-from google.adk.tools.tool_context import ToolContext
+from google.adk.agents import LlmAgent, Agent
 from google.adk.agents.callback_context import CallbackContext
-from google.adk.auth import AuthConfig, AuthCredential, AuthCredentialTypes, OAuth2Auth
 
+from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
+from google.adk.tools.tool_context import ToolContext
+
+from google.adk.auth.auth_credential import AuthCredential, AuthCredentialTypes, OAuth2Auth
+from google.adk.auth.auth_tool import AuthConfig
+
+from fastapi.openapi.models import OAuth2, OAuthFlowAuthorizationCode, OAuthFlows
 from google.auth.transport.requests import Request
+import google.oauth2.id_token
+
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+
+cloud_logging_client = google.cloud.logging.Client()
+cloud_logging_client.setup_logging()
 
 # Load environment variables from .env file
 load_dotenv()
@@ -80,7 +90,6 @@ vertexai.init(
 )
 print(f"Vertex AI initialized for project {GOOGLE_CLOUD_PROJECT} in {GOOGLE_CLOUD_LOCATION}.")
 
-
 # --- Helper Function: Get User Email from Credentials ---
 def _get_user_email_from_creds(creds: Credentials) -> str | None:
     """Fetches user email using provided Google OAuth credentials."""
@@ -137,6 +146,7 @@ def prereq_setup(callback_context: CallbackContext):
                 else:
                     # If email couldn't be retrieved despite valid creds
                     callback_context.state['_user_email'] = "Authenticated, but email not found"
+                    
             else:
                 # If credentials are no longer valid, clear them to force re-auth
                 print("Callback: Stored tokens invalid/expired, clearing from state.")
@@ -215,15 +225,17 @@ def authenticate_user_tool(tool_context: ToolContext):
                 # ADK exchanged the access token already for us
                 access_token = auth_response.oauth2.access_token
                 refresh_token = auth_response.oauth2.refresh_token
+                id_token = auth_response.oauth2.id_token
                 creds = Credentials(
                     token=access_token,
+                    id_token=id_token,
                     refresh_token=refresh_token,
                     token_uri=GOOGLE_TOKEN_URL,
                     client_id=OAUTH_CLIENT_ID,
                     client_secret=OAUTH_CLIENT_SECRET,
                     scopes=SCOPES_LIST, # Use the list of scope strings here
                 )
-                print("Auth Tool: Received new tokens via ADK's auth_response.")
+                print(f"Auth Tool: Received new tokens via ADK's auth_response. {creds.id_token} (id token) {creds.token} (auth token)")
             else:
                 # If there's no auth response, request the user to go through the OAuth flow
                 tool_context.request_credential(auth_config)
@@ -239,8 +251,10 @@ def authenticate_user_tool(tool_context: ToolContext):
         # Store credentials (as JSON-serializable dict) in session state for future use
         tool_context.state[TOKEN_STATE_KEY] = json.loads(creds.to_json())
         user_email = _get_user_email_from_creds(creds)
+
         if user_email:
             tool_context.state['_user_email'] = user_email # Store email in state for access by agent instruction
+
             print(f"Auth Tool: Authentication successful for {user_email}.")
             return {"result": f"Authentication successful for {user_email}. You can now proceed."}
         else:
@@ -251,7 +265,6 @@ def authenticate_user_tool(tool_context: ToolContext):
         print("Auth Tool: Authentication process incomplete or failed after all attempts.")
         return {"result": "Authentication process incomplete or failed. Please try again."}
 
-
 # --- Tool: get_user_email_tool ---
 def get_user_email_tool(tool_context: ToolContext):
     """
@@ -260,6 +273,7 @@ def get_user_email_tool(tool_context: ToolContext):
     """
     print("\n--- Running get_user_email_tool ---")
     user_email = tool_context.state.get('_user_email')
+
     if user_email and user_email != "Not authenticated": # Check for default value
         print(f"Tool: Retrieved user email: {user_email}")
         return {"result": f"Your authenticated email address is: {user_email}"}
@@ -267,67 +281,65 @@ def get_user_email_tool(tool_context: ToolContext):
         print("Tool: User email not found in state. Authentication might be required.")
         return {"result": "I don't have your email address. Have you authenticated yet? Please ask me to authenticate you first."}
 
-# --- TOOL: get_user_access_token_tool ---
-def get_user_access_token_tool(tool_context: ToolContext):
-    """
-    Retrieves the authenticated user's access token from the session state.
-    This tool should be called by the agent if it needs to provide the access token
-    to the user or use it in another context (though direct use by agent is rare).
-    """
-    print("\n--- Running get_user_access_token_tool ---")
-    # This will retrieve the dictionary directly, not a JSON string.
-    stored_tokens = tool_context.state.get(TOKEN_STATE_KEY)
+def get_id_token():
+    """Get an ID token to authenticate with the MCP server."""
+    target_url = "https://zoo-mcp-server-505636788486.us-central1.run.app/mcp/"
+    audience = target_url.split('/mcp/')[0]
+    request = Request()
+    id_token = google.oauth2.id_token.fetch_id_token(request, audience)
+    return id_token
 
-    if stored_tokens: # Now 'stored_tokens' is already the dictionary
-        try:
-            # NO! Don't use json.loads() here. 'stored_tokens' is already a dict.
-            # stored_tokens = json.loads(stored_tokens)
-            
-            # Reconstruct Credentials object to access its token attribute
-            creds = Credentials.from_authorized_user_info(
-                stored_tokens,
-                SCOPES_LIST
-            )
-            
-            if creds.valid:
-                # Access the access token from the Credentials object
-                access_token = creds.token
-                print(f"Tool: Retrieved access token: {access_token[:10]}... (truncated)")
-                return {"result": f"Your access token is: `{access_token}`"}
-            else:
-                print("Tool: Stored credentials are not valid. Please re-authenticate.")
-                return {"result": "Your session has expired or is invalid. Please authenticate again."}
-        except Exception as e:
-            print(f"Tool: Error retrieving access token from state: {e}", file=sys.stderr)
-            return {"result": "Error retrieving access token. Please check the agent's logs."}
-    else:
-        print("Tool: No authentication tokens found in state.")
-        return {"result": "You are not authenticated. Please authenticate first to get an access token."}
+mcp_tools = McpToolset(
+    connection_params=StreamableHTTPConnectionParams(
+        url="https://zoo-mcp-server-505636788486.us-central1.run.app/mcp/",
+        headers={
+            "Authorization": f"Bearer { get_id_token() }",
+        },
+    )
+)
 
-# --- Define the Root Agent ---
+zoo_mcp_tool_agent = Agent(
+    name="zoo_mcp_tool_agent",
+    model=str(MODEL_ID),
+    instruction=f"""
+    You are a helpful agent for the Zoo MCP tool.
+    Your primary goal is to assist users in interacting with the Zoo MCP server.
+    You can lookup the list of tools the MCP server has to offer and return them.
+    You can also call the tools to get information about animals in the zoo.
+    Answer any questions related to zoo animals as if you were a zookeeper.
+    """,
+    tools=[
+        mcp_tools
+    ]
+)
+
 root_agent = LlmAgent(
     name="root_agent",
     model=str(MODEL_ID),
     instruction=f"""
     You are a helpful end user authentication agent.
     Your primary goal is to help users authenticate via Google OAuth2 and retrieve their profile information, specifically their email address.
+    After authenticating, you can use the tools from the MCP toolset to answer questions.
 
     Here is some current context about the user's authentication status:
-    - Current server timezone: {{_tz}}
-    - Current server datetime: {{_time}}
-    - User's email (if authenticated): {{_user_email}}
+    - Current server timezone: {{{{_tz}}}}
+    - Current server datetime: {{{{_time}}}}
+    - User's email (if authenticated): {{{{_user_email}}}}
 
-    When the user first interacts, or if they explicitly ask to authenticate, log in, or verify their identity, you must use the `authenticate_user_tool` to guide them through the OAuth process.
-    Once successfully authenticated, or if you already know their email from the context, you can use the `get_user_email_tool` to display or confirm their email address.
-    You can also use the `get_user_access_token_tool` to retrieve the user's access token, if they ask for it.
-    If the user is already authenticated, you should confirm their email or state that they are already logged in.
+    When the user first interacts, or if they explicitly ask to authenticate, log in, or verify their identity, you must call ONLY the `authenticate_user_tool` to guide them through the OAuth process. Do not call any other tool until authentication is complete.
+    Only after successful authentication (when you know the user is authenticated), you may call `get_user_email_tool` to display or confirm their email address, but do not call it immediately after authentication unless the user requests their email.
+    You can use `get_user_access_token_tool` to retrieve the user's access token or id token, but only if the user asks for it.
+    If the user is already authenticated, you should confirm their email or state that they are already logged in, but do not call authentication again.
+    Use the `zoo_mcp_tool_agent` to interact with the Zoo MCP server after authentication is complete.
     """,
+    sub_agents=[
+        zoo_mcp_tool_agent
+    ],
     tools=[
         authenticate_user_tool,
         get_user_email_tool,
-        get_user_access_token_tool,
     ],
-    before_agent_callback=[prereq_setup]
+    before_agent_callback=[prereq_setup],
 )
 
 # --- Initialize ADK App ---
@@ -335,5 +347,3 @@ app = reasoning_engines.AdkApp(
     agent=root_agent,
     enable_tracing=True,
 )
-
-print("\nADK App created successfully. This file defines your agent for deployment.")

@@ -27,3 +27,7 @@ To run the `oauth_agent` locally for development:
 
 5.  **Select the `oauth_agent` folder** from the agent selection UI to start the agent.
 
+
+
+
+export GOOGLE_APPLICATION_CREDENTIALS=~/.config/gcloud/application_default_credentials.json
