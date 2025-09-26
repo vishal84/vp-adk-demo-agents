@@ -147,14 +147,14 @@ def prereq_setup(callback_context: CallbackContext):
             else:
                 # If credentials are no longer valid, clear them to force re-auth
                 print("Callback: Stored tokens invalid/expired, clearing from state.")
-                del callback_context.state[TOKEN_STATE_KEY]
+                callback_context.state[TOKEN_STATE_KEY].clear()
                 # Ensure _user_email is reset if tokens are invalid
                 callback_context.state['_user_email'] = "Not authenticated"
 
         except Exception as e:
             print(f"Callback: Error processing stored tokens: {e}. Clearing state.", file=sys.stderr)
             if TOKEN_STATE_KEY in callback_context.state:
-                del callback_context.state[TOKEN_STATE_KEY]
+                callback_context.state[TOKEN_STATE_KEY].clear()
             # Ensure _user_email is reset on error
             callback_context.state['_user_email'] = "Not authenticated (Error during token processing)"
 
@@ -179,9 +179,9 @@ def authenticate_user_tool(tool_context: ToolContext):
             creds = None # Force re-auth if loading fails
             # Clear invalid tokens from state
             if TOKEN_STATE_KEY in tool_context.state:
-                del tool_context.state[TOKEN_STATE_KEY]
+                tool_context.state[TOKEN_STATE_KEY].clear()
             if '_user_email' in tool_context.state:
-                del tool_context.state['_user_email']
+                tool_context.state['_user_email'].clear()
 
     # If credentials are not valid (or didn't exist/loaded), try to refresh or request new ones
     if not creds or not creds.valid:
@@ -192,7 +192,7 @@ def authenticate_user_tool(tool_context: ToolContext):
                 print("Auth Tool: Token refreshed successfully.")
             except Exception as e:
                 print(f"Auth Tool: Failed to refresh token: {e}. Will request new authorization.", file=sys.stderr)
-                creds = None # Force full re-auth if refresh fails
+                creds = None # Force re-auth if refresh fails
         else:
             # Define the OAuth scheme as required by ADK
             auth_scheme = OAuth2(
@@ -200,7 +200,7 @@ def authenticate_user_tool(tool_context: ToolContext):
                     authorizationCode=OAuthFlowAuthorizationCode(
                         authorizationUrl=GOOGLE_AUTH_URL,
                         tokenUrl=GOOGLE_TOKEN_URL,
-                        scopes=SCOPES_DICT, # Pass the dictionary of scopes here
+                        scopes=SCOPES_DICT,
                     )
                 )
             )
