@@ -3,8 +3,8 @@
 # =============================================================================
 # CREATE AGENTSPACE AGENT
 # =============================================================================
-# This script creates the Meeting Prep Agent in AgentSpace
-# Run this AFTER creating authorization and deploying the reasoning engine
+# This script surfaces an agent running on Agent Engine in AgentSpace
+# Run this AFTER creating and deploying the agent to Agent Engine
 
 set -e  # Exit on any error
 
@@ -18,7 +18,7 @@ else
 fi
 
 # Validate required variables
-required_vars=("GOOGLE_CLOUD_PROJECT" "GOOGLE_CLOUD_PROJECT_NUMBER" "GOOGLE_CLOUD_LOCATION" "AS_APP" "ASSISTANT_ID" "AGENT_NAME" "AGENT_DISPLAY_NAME" "AGENT_DESCRIPTION" "TOOL_DESCRIPTION" "AUTH_ID")
+required_vars=("GOOGLE_CLOUD_PROJECT" "GOOGLE_CLOUD_PROJECT_NUMBER" "GOOGLE_CLOUD_LOCATION" "AS_APP" "ASSISTANT_ID" "AGENT_NAME" "AGENT_DISPLAY_NAME" "AGENT_DESCRIPTION" "TOOL_DESCRIPTION")
 for var in "${required_vars[@]}"; do
     if [ -z "${!var}" ]; then
         echo "❌ Error: Required environment variable $var is not set in .env"
@@ -60,12 +60,14 @@ response=$(curl -s -w "\n%{http_code}" -X POST \
       },
       "provisioned_reasoning_engine": {
         "reasoning_engine": "'"${REASONING_ENGINE}"'"
-      },
-      "authorizations": [
-        "projects/'"${GOOGLE_CLOUD_PROJECT_NUMBER}"'/locations/global/authorizations/'"${AUTH_ID}"'"
-      ]
+      }
     }
   }')
+
+#,
+#      "authorizations": [
+#        "projects/'"${GOOGLE_CLOUD_PROJECT_NUMBER}"'/locations/global/authorizations/'"${AUTH_ID}"'"
+#      ]
 
 # Extract response body and status code
 http_code=$(echo "$response" | tail -n1)
