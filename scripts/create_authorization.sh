@@ -18,7 +18,7 @@ else
 fi
 
 # Validate required variables
-required_vars=("GOOGLE_CLOUD_PROJECT" "AUTH_ID" "CLIENT_ID" "CLIENT_SECRET" "SCOPES")
+required_vars=("GOOGLE_CLOUD_PROJECT" "AUTH_ID" "OAUTH_CLIENT_ID" "OAUTH_CLIENT_SECRET" "SCOPES")
 for var in "${required_vars[@]}"; do
     if [ -z "${!var}" ]; then
         echo "❌ Error: Required environment variable $var is not set in .env"
@@ -44,8 +44,8 @@ JSON_PAYLOAD=$(cat <<EOF
 {
   "name": "projects/${GOOGLE_CLOUD_PROJECT}/locations/global/authorizations/${AUTH_ID}",
   "serverSideOauth2": {
-    "clientId": "${CLIENT_ID}",
-    "clientSecret": "${CLIENT_SECRET}",
+    "clientId": "${OAUTH_CLIENT_ID}",
+    "clientSecret": "${OAUTH_CLIENT_SECRET}",
     "authorizationUri": "${AUTHORIZATION_URI}",
     "tokenUri": "https://oauth2.googleapis.com/token"
   }

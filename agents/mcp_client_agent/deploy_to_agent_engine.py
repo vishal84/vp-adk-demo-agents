@@ -4,7 +4,7 @@ from vertexai import agent_engines
 from vertexai.preview import reasoning_engines
 from dotenv import load_dotenv
 
-from .agent import root_agent
+from mcp_client_agent.agent import root_agent
 
 load_dotenv()
 
@@ -38,7 +38,7 @@ agent_config = {
         "google-auth-oauthlib"
     ],
     "extra_packages": [
-        "agent.py"
+        "mcp_client_agent/agent.py"
     ],
     "env_vars": {
         "STAGING_BUCKET": f"{STAGING_BUCKET}",
