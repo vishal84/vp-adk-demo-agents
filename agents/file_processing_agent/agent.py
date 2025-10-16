@@ -79,19 +79,19 @@ def file_processing_function(file_name: str, tool_context: ToolContext) -> Dict[
                 "file_name": target_artifact.name,
                 "analysis": f"""Image Analysis Results:
 
-**Basic Properties:**
-- Dimensions: {width} x {height} pixels
-- Aspect Ratio: {aspect_ratio}:1
-- Format: {format_name}
-- Color Mode: {color_info}
-- File Size: {len(file_data):,} bytes
+                **Basic Properties:**
+                - Dimensions: {width} x {height} pixels
+                - Aspect Ratio: {aspect_ratio}:1
+                - Format: {format_name}
+                - Color Mode: {color_info}
+                - File Size: {len(file_data):,} bytes
 
-**Image Characteristics:**
-- Resolution: {width * height:,} total pixels
-- Suitable for: {'High resolution display' if width >= 1920 else 'Standard display' if width >= 1280 else 'Thumbnail/small display'}
+                **Image Characteristics:**
+                - Resolution: {width * height:,} total pixels
+                - Suitable for: {'High resolution display' if width >= 1920 else 'Standard display' if width >= 1280 else 'Thumbnail/small display'}
 
-The image has been successfully loaded and is ready for visual analysis by vision-capable models.
-You can now describe what you see in the image, identify objects, read text, or answer questions about its content."""
+                The image has been successfully loaded and is ready for visual analysis by vision-capable models.
+                You can now describe what you see in the image, identify objects, read text, or answer questions about its content."""
             }
         
         elif file_extension in document_formats:
@@ -128,20 +128,20 @@ You can now describe what you see in the image, identify objects, read text, or 
                 "file_name": target_artifact.name,
                 "analysis": f"""PDF Document Analysis Results:
 
-**Document Properties:**
-- Pages: {num_pages}
-- File Size: {len(file_data):,} bytes{doc_info}
+                **Document Properties:**
+                - Pages: {num_pages}
+                - File Size: {len(file_data):,} bytes{doc_info}
 
-**Content Statistics:**
-- Total Characters: {char_count:,}
-- Total Words: {word_count:,}
-- Average Words per Page: {word_count // num_pages if num_pages > 0 else 0}
+                **Content Statistics:**
+                - Total Characters: {char_count:,}
+                - Total Words: {word_count:,}
+                - Average Words per Page: {word_count // num_pages if num_pages > 0 else 0}
 
-**Extracted Content:**
+                **Extracted Content:**
 
-{full_text[:5000]}{'...\n\n[Content truncated - showing first 5000 characters]' if len(full_text) > 5000 else ''}
+                {full_text[:5000]}{'...\n\n[Content truncated - showing first 5000 characters]' if len(full_text) > 5000 else ''}
 
-The full text has been extracted and is ready for analysis."""
+                The full text has been extracted and is ready for analysis."""
             }
         
         else:
