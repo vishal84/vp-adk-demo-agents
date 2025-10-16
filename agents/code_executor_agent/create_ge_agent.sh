@@ -64,11 +64,6 @@ response=$(curl -s -w "\n%{http_code}" -X POST \
     }
   }')
 
-#,
-#      "authorizations": [
-#        "projects/'"${GOOGLE_CLOUD_PROJECT_NUMBER}"'/locations/global/authorizations/'"${AUTH_ID}"'"
-#      ]
-
 # Extract response body and status code
 http_code=$(echo "$response" | tail -n1)
 response_body=$(echo "$response" | sed '$d')
