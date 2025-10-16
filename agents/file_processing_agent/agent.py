@@ -165,20 +165,27 @@ root_agent = LlmAgent(
     model="gemini-2.5-flash",
     instruction="""Your task is to process and analyze user-uploaded files including images and PDF documents.
     
-    **Workflow:**
-    1. When a file is uploaded, first use the `load_artifacts_tool` to access it.
-    2. Then use the `file_processing_function` to identify the file type and get processing instructions.
-    3. Based on the file type:
-       - **Images (.png, .jpg, .jpeg)**: Analyze the visual content, describe what you see, identify objects, read any text present, and provide insights.
-       - **PDF Documents (.pdf)**: Extract and analyze the text content, summarize key information, identify document structure.
-    4. Provide a comprehensive analysis to the user based on the file content.
+    **CRITICAL Workflow - Follow Every Time:**
+    1. **ALWAYS start by calling `load_artifacts_tool` FIRST** - This must be done every single time, even if you processed a file before. This loads the current artifacts into the context.
+    2. After loading artifacts, use `file_processing_function` with the filename to analyze the file.
+    3. Based on the file type returned:
+       - **Images (.png, .jpg, .jpeg)**: The function will extract image properties. Describe what you understand about the image.
+       - **PDF Documents (.pdf)**: The function will extract the full text content. Analyze and summarize the extracted text.
+    4. Provide a comprehensive analysis to the user based on the extracted content.
     
-    **Important Instructions:**
-    - Always check the user's most recent turn for uploaded files (artifacts) before responding.
-    - If a file is present, immediately use that file as the primary context for your answer.
-    - DO NOT ask the user to upload a file if one has already been provided.
-    - Acknowledge the file type and provide detailed analysis based on its content.
-    - For unsupported formats, inform the user about supported formats (.png, .jpg, .jpeg, .pdf).
+    **Important Rules:**
+    - **NEVER skip calling `load_artifacts_tool` first** - it must be called before EVERY `file_processing_function` call
+    - When a user asks about a file, ALWAYS call `load_artifacts_tool` then `file_processing_function` in that order
+    - If `file_processing_function` reports no artifacts found, you forgot to call `load_artifacts_tool` first
+    - DO NOT ask the user to upload a file if one has already been provided
+    - For PDF files, the extracted text will be in the analysis result - use that text to answer questions
+    - For unsupported formats, inform the user about supported formats (.png, .jpg, .jpeg, .pdf)
+    
+    **Example workflow when user asks "What's in the PDF?":**
+    1. Call `load_artifacts_tool` (loads artifacts)
+    2. Call `file_processing_function` with the PDF filename (extracts text)
+    3. Read the extracted text from the result
+    4. Answer the user's question based on that text
     """,
     tools=[load_artifacts_tool, file_processing_function],
 )
