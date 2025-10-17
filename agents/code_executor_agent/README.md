@@ -43,4 +43,31 @@ It will take a few minutes for the Role creation to propagage before you can ass
 
 8. Select __+ Add another role__ then select __Custom__ under the quick filters. Select the custom IAM Role created earlier then click __Save__.
 
+## Deploy the agent
 
+You will first need to deploy the agent to Agent Engine before surfacing it in Gemini Enterprise. 
+
+To do so ensure you are within the folder with the agent code:
+
+1. Run the following command via command line to deploy using the `adk` CLI:
+```
+uv run adk deploy agent_engine --project=[REPLACE with PROJECT_ID] --region=[REPLACE WITH REGION] --staging_bucket=[REPLACE WITH STAGING BUCKET] --display_name="REPLACE WITH DISPLAY NAME" .
+```
+
+This command will package your ADK agent and deploy it to Agent Engine.
+
+2. After the agent deploys to Agent Engine, you can run the `create_ge_agent.sh` script found in this code example to surface the agent in Gemini Enterprise.
+
+Make the script runnable:
+```
+chmod +x create_ge_agent.sh
+```
+
+Execute the script:
+```
+./create_ge_agent.sh
+```
+
+Once deployed you should see the agent in the Agent Gallery of Gemini Enterprise. You can use the delete script to remove the agent from Gemini Enterprise and will need to update the `AGENT_RESOURCE_NAME` in the `.env` file for it to delete.
+
+Note: Delete the agent from Gemini Enterprise prior to deleting the agent from Agent Engine if you do plan on deleting the agent.
