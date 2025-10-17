@@ -1,6 +1,6 @@
 # Code Executor Agent
 
-To use this agent, you will need to first run the agent via adk web locally. This will create a Code Executor Vertex AI Extension in the GCP project the agent will be deployed to. On the first deploy locally you will see that the agent does not detect the Code Executor extension and will create one automatically for you in the project referenced in the `.env` file.
+To use this agent, you will need to first run the agent via adk web locally. This will create a Code Executor Vertex AI Extension in the GCP project the agent will be deployed to. On the first deployment locally you will see that the agent does not detect the Code Executor extension and will create one automatically for you in the project referenced in the `.env` file.
 
 After running `adk web` locally to deploy the agent, go to the Vertex AI Extensions page in your project:
 [Vertex AI Extensions](https://console.cloud.google.com/vertex-ai/extensions) to copy the ID of the Extension.
