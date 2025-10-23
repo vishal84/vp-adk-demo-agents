@@ -13,17 +13,7 @@ from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
-try:
-    from .agent import qna_agent
-except ImportError:
-    import sys
-    from pathlib import Path
-
-    current_dir = Path(__file__).resolve().parent
-    if str(current_dir) not in sys.path:
-        sys.path.append(str(current_dir))
-
-    from agent import qna_agent  # type: ignore
+from .agent import qna_agent
 
 class QnAAgentExecutor(AgentExecutor):
     """Agent Executor that bridges A2A protocol with our ADK agent.
