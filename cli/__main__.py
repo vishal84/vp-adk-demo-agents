@@ -29,6 +29,33 @@ from a2a.types import (
     TextPart,
 )
 
+def print_event(event):
+    print(f'stream event => {event.model_dump_json(exclude_none=True)}')
+    print("--------------------------------------------------")
+    if isinstance(event, Task):
+        print(f"Task Started: {event.id}")
+        print(f"Status: {event.status.state}")
+    elif isinstance(event, TaskStatusUpdateEvent):
+        print(f"Task Status Update for {event.task_id}")
+        print(f"New Status: {event.status.state}")
+        if event.status.message:
+            for part in event.status.message.parts:
+                if isinstance(part.root, TextPart):
+                    print(f"Message: {part.root.text}")
+    elif isinstance(event, TaskArtifactUpdateEvent):
+        print(f"Artifact Update for {event.task_id}")
+        if event.artifact:
+            print(f"Artifact Name: {event.artifact.name}")
+            for part in event.artifact.parts:
+                if isinstance(part.root, TextPart):
+                    print(f"Content: {part.root.text}")
+    elif isinstance(event, Message):
+        print(f"Message from {event.role}:")
+        for part in event.parts:
+            if isinstance(part.root, TextPart):
+                print(part.root.text)
+    print("--------------------------------------------------\n")
+
 
 @click.command()
 @click.option('--agent', default='http://localhost:8083')
@@ -228,7 +255,8 @@ async def completeTask(
                     task_completed = True
             elif isinstance(event, Message):
                 message = event
-            print(f'stream event => {event.model_dump_json(exclude_none=True)}')
+            print_event(event)
+
         # Upon completion of the stream. Retrieve the full task if one was made.
         if task_id and not task_completed:
             taskResultResponse = await client.get_task(
