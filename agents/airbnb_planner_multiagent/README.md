@@ -72,6 +72,14 @@ cd samples/python/agents/airbnb_planner_multiagent/host_agent
 uv run .
 ```
 
+### Run the demo using shell script
+Run `./run_demo.sh` from the root directory `/airbnb_planner_multiagent` to start all required agents.
+
+To stop them once done demoing run:
+```
+pkill -f 'uv run \.'
+```
+
 ## 4. Test at the UI
 
 Here are example questions:
