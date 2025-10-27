@@ -9,12 +9,14 @@ PROJECT_ID=${1:-"your-gcp-project-id"}
 SERVICE_NAME="sec-edgar-mcp"
 REGION=${2:-"us-central1"}
 IMAGE_NAME="gcr.io/$PROJECT_ID/$SERVICE_NAME"
+SEC_EDGAR_USER_AGENT=${3:-"vishalapatel@google.com"}
 
 echo "🚀 Deploying SEC EDGAR MCP to Google Cloud Run..."
 echo "Project: $PROJECT_ID"
 echo "Service: $SERVICE_NAME"
 echo "Region: $REGION"
 echo "Image: $IMAGE_NAME"
+echo "SEC EDGAR User-Agent: $SEC_EDGAR_USER_AGENT"
 
 # Check if gcloud is authenticated
 if ! gcloud auth list --filter=status:ACTIVE --format="value(account)" | grep -q "."; then
@@ -52,7 +54,7 @@ gcloud run deploy $SERVICE_NAME \
     --cpu 1 \
     --timeout 3600 \
     --max-instances 10 \
-    --set-env-vars SEC_EDGAR_USER_AGENT="SEC EDGAR MCP Cloud Run server@$(whoami).com"
+    --set-env-vars SEC_EDGAR_USER_AGENT="$SEC_EDGAR_USER_AGENT"
 
 # Get the service URL
 SERVICE_URL=$(gcloud run services describe $SERVICE_NAME --region=$REGION --format="value(status.url)")
