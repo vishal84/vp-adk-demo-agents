@@ -22,7 +22,7 @@ logger.info(f"🔧 Initializing SEC EDGAR Agent with MCP_SERVER_URL: {MCP_SERVER
 
 def get_identity_token():
     """Get Google Cloud identity token for authentication."""
-    logger.info(f"🔐 Attempting to get identity token for audience: {audience}")
+    logger.info(f"🔐 Attempting to get identity token...")
     try:
         # For Cloud Run IAM authentication, we need an identity token with the Cloud Run URL as audience
         cmd = ["gcloud", "auth", "print-identity-token"]
