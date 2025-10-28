@@ -34,9 +34,9 @@ This folder ties together the explanations for each agent in the `airbnb_planner
 
 ## References
 - See individual agent explanations:
-  - [Airbnb Agent](./airbnb_agent.md)
-  - [Host Agent](./host_agent.md)
-  - [Weather Agent](./weather_agent.md)
+  - [Airbnb Agent](./airbnb_agent/airbnb_agent.md)
+  - [Host Agent](./host_agent/host_agent.md)
+  - [Weather Agent](./weather_agent/weather_agent.md)
 
 ---
 This documentation provides a high-level overview and technical breakdown of the multiagent system, supporting onboarding, extension, and troubleshooting for developers.
