@@ -53,13 +53,13 @@ async def _patched_get_headers(
 
 
 def apply_patch():
-    """Apply the monkey patch to McpTool._get_headers method."""
+    """Apply the patch to McpTool._get_headers method."""
     McpTool._get_headers = _patched_get_headers
     logger.info("Applied agentspace_auth_resource patch to McpTool._get_headers")
 
 
 def remove_patch():
-    """Remove the monkey patch and restore original functionality."""
+    """Remove the patch and restore original functionality."""
     McpTool._get_headers = _original_get_headers
     logger.info("Removed agentspace_auth_resource patch from McpTool._get_headers")
 
