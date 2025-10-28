@@ -10,20 +10,20 @@ The Calendar Agent A2A is a demonstration of building an Agent-to-Agent (A2A) pr
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Calendar Agent A2A                        │
-│                                                              │
-│  ┌──────────────┐      ┌──────────────┐                    │
-│  │   agent.py   │─────▶│agent_executor│                    │
-│  │  (ADK Agent) │      │    .py       │                    │
-│  └──────────────┘      └──────────────┘                    │
-│         │                     │                              │
-│         │                     ▼                              │
+│                    Calendar Agent A2A                       │
+│                                                             │
+│  ┌──────────────┐      ┌──────────────┐                     │
+│  │   agent.py   │─────▶│agent_executor│                     │
+│  │  (ADK Agent) │      │    .py       │                     │
+│  └──────────────┘      └──────────────┘                     │
+│         │                     │                             │
+│         │                     ▼                             │
 │         │            ┌─────────────────┐                    │
 │         │            │  A2A Server     │                    │
 │         └───────────▶│  (__main__.py)  │                    │
 │                      └─────────────────┘                    │
-│                              │                               │
-└──────────────────────────────┼───────────────────────────────┘
+│                              │                              │
+└──────────────────────────────┼──────────────────────────────┘
                                │
                                ▼
                     ┌──────────────────────┐
@@ -443,13 +443,13 @@ Client                  A2A Server              ADK Agent
   │                         │◀──event stream────────│
   │                         │  (working, artifacts) │
   │                         │                       │
-  │◀──TaskUpdate───────────│                       │
+  │◀──TaskUpdate────────────│                       │
   │  (status: working)      │                       │
   │                         │                       │
-  │◀──TaskUpdate───────────│                       │
+  │◀──TaskUpdate────────────│                       │
   │  (artifact: response)   │                       │
   │                         │                       │
-  │◀──TaskUpdate───────────│                       │
+  │◀──TaskUpdate────────────│                       │
   │  (status: completed)    │                       │
 ```
 
