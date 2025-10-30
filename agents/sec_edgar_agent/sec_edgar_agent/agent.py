@@ -1,12 +1,13 @@
 from . import patch_adk
-import subprocess
 import os
 import logging
+import google.oauth2.id_token
 from google.adk.agents import Agent
 from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
 from google.adk.auth.auth_credential import AuthCredential, AuthCredentialTypes
-
+from google.auth.transport.requests import Request
 from google.adk.auth.auth_credential import HttpAuth, HttpCredentials
+
 from fastapi.openapi.models import HTTPBearer
 from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
 from dotenv import load_dotenv
@@ -21,30 +22,12 @@ MCP_SERVER_URL=str(os.getenv("MCP_SERVER_URL"))
 logger.info(f"🔧 Initializing SEC EDGAR Agent with MCP_SERVER_URL: {MCP_SERVER_URL}")
 
 def get_identity_token():
-    """Get Google Cloud identity token for authentication."""
-    logger.info(f"🔐 Attempting to get identity token...")
-    try:
-        # For Cloud Run IAM authentication, we need an identity token with the Cloud Run URL as audience
-        cmd = ["gcloud", "auth", "print-identity-token"]
-                
-        logger.info(f"Running command: {' '.join(cmd)}")
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        token = result.stdout.strip()
-        logger.info(f"✓ Successfully generated identity token (length: {len(token)})")
-        return token
-    except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Failed to get identity token: {e}")
-        logger.error(f"Command stdout: {e.stdout}")
-        logger.error(f"Command stderr: {e.stderr}")
-        return None
-    except FileNotFoundError as e:
-        logger.error(f"❌ gcloud command not found: {e}")
-        return None
+    """Get an ID token to authenticate with the MCP server."""
+    target_url = f"{MCP_SERVER_URL}"
+    audience = target_url.split('/mcp')[0]
+    request = Request()
+    id_token = google.oauth2.id_token.fetch_id_token(request, audience)
+    return id_token
 
 # Get identity token for manual header configuration with Cloud Run URL as audience
 logger.info("🚀 Getting identity token...")

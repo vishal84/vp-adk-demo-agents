@@ -87,4 +87,4 @@ uv run python agent.py
 - [Deployment Instructions](./DEPLOYMENT.md)
 - [Google ADK Docs](https://google.github.io/adk-docs/)
 
-Built for BCG with deterministic SEC data responses and exact financial precision.
+Built with deterministic SEC data responses and exact financial precision.
