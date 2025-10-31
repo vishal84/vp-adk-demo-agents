@@ -94,9 +94,3 @@ root_agent = Agent(
     description="An SEC EDGAR financial data agent that provides company information, filings analysis, financial statements, and insider trading data",
     tools=[sec_edgar_mcp]
 )
-
-# --- Initialize ADK App ---
-app = reasoning_engines.AdkApp(
-    agent=root_agent,
-    enable_tracing=True,
-)
