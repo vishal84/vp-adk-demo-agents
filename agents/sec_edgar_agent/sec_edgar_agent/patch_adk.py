@@ -36,7 +36,8 @@ async def _patched_get_headers(
         if hasattr(credential.http, 'agentspace_authentication_resource_auth_id'):
             auth_id = credential.http.agentspace_authentication_resource_auth_id
             access_token = tool_context.state.get(f"temp:{auth_id}")
-            # access_token = "TEST123" # FIXME
+            # when testing locally you can hardcode the identity token token here temporarily
+            #access_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImI1ZTQ0MGFlOTQxZTk5ODFlZTJmYTEzNzZkNDJjNDZkNzMxZGVlM2YiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIzMjU1NTk0MDU1OS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjMyNTU1OTQwNTU5LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA0MjU1ODA0MjcxMTk4NTUxNzY0IiwiaGQiOiJ2aXNoYWxhcGF0ZWwuYWx0b3N0cmF0LmNvbSIsImVtYWlsIjoidmlzaGFsQHZpc2hhbGFwYXRlbC5hbHRvc3RyYXQuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJ6SkowemxEbm9ieXhNVFZueWN0Q25RIiwiaWF0IjoxNzYxOTIwNTQ2LCJleHAiOjE3NjE5MjQxNDZ9.ESTDoWyMOgTXP5kAkWPc649e_PqP9zHVyI47bSbP-CnwjmTuRjzJDsRk1JErGIMn3CB70mP_ydYps1eRnO5GNmwt9c01iKmVtHH0o6_BxFQCb8xNcAddKnfSELW46EYGMCAtowhsCLgSnBo_4ijhhfIAB16DGyoMMYyM1uZ5bDz9xmUC6qmkVIe3HH4vm5_ScdB2pdfmNWGWkpyxsmaiq2ylqaextCYqatQNBxHsX-l9AF71fYuo4ZzSfhWtc6y3Wq_g22IviMsonfmh3ko97KtXTNIJ5pGp4IPyQlhvlMgaA9pbhMeYL0WoTOGQ8EZ9A8namjOU4vyLUMSUT4Obxg" # FIXME
             
             if access_token:
                 logger.debug(f"Using agentspace_auth_resource token for auth_id: {auth_id}")
