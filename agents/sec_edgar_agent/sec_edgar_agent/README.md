@@ -21,19 +21,60 @@ This project uses `uv` for dependency management:
 uv sync
 ```
 
-### 2. Configure API Key
+### 2. Configure for Vertex AI
 
-1. Get your Google AI Studio API key from: https://aistudio.google.com/app/apikey
-2. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
-3. Edit `.env` and add your API key:
-   ```
-   GOOGLE_API_KEY=your_actual_api_key_here
-   ```
+This agent is configured to use Vertex AI for its generative AI capabilities.
+
+1.  **Authenticate with Google Cloud:**
+    If you haven't already, authenticate with the Google Cloud CLI:
+    ```bash
+    gcloud auth login
+    gcloud auth application-default login
+    ```
+
+2.  **Set up your environment:**
+    Copy the example environment file:
+    ```bash
+    cp .env.example .env
+    ```
+
+3.  **Edit the `.env` file** and set the following variables:
+    ```
+    GOOGLE_GENAI_USE_VERTEXAI=TRUE
+    GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+    GOOGLE_CLOUD_LOCATION="your-gcp-region" # e.g., us-central1
+    STAGING_BUCKET="gs://your-gcs-bucket-name"
+    ```
+    - `GOOGLE_CLOUD_PROJECT`: Your Google Cloud project ID.
+    - `GOOGLE_CLOUD_LOCATION`: The Google Cloud region to use.
+    - `STAGING_BUCKET`: A Google Cloud Storage bucket for temporary files.
 
 ### 3. Run the Agent
+
+If running the agent locally you can use service account impersonation to avoid downloading a service account key which can be a security risk. To do so you will need to impersonate a service account with required permissions needed to run this code sample.
+
+Create a service account in __IAM & Admin__ and ensure you assign the following __IAM Roles__ to it:
+- Cloud Run Service Invoker
+- Logs Writer
+- Storage Admin
+- Vertex AI User
+
+Authenticate with the gcloud CLI using the following:
+```
+gcloud auth application-default login --impersonate-service-account {SERVICE_ACCOUNT_EMAIL}
+```
+
+This will open a web browser prompting you to log in to your IAM user's account but will impersonate the service account and store its credentials to a location on your workstation. An example is below after successfully logging in:
+```
+Credentials saved to file: [/Users/(username)/.config/gcloud/application_default_credentials.json]
+```
+
+Set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to point to the temporary location of the credentials on your local machine (from above):
+```
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/(username)/.config/gcloud/application_default_credentials.json
+```
+
+You can now run the agent locally using `adk web`.
 
 #### Web UI (Recommended)
 ```bash
@@ -93,7 +134,7 @@ Ask the agent questions like:
 
 This agent connects to our deployed SEC EDGAR MCP server at:
 ```
-https://sec-edgar-mcp-371617986509.us-central1.run.app/mcp
+https://sec-edgar-mcp-{PROJECT_NUMBER}.{REGION}.run.app/mcp
 ```
 
 ### Authentication
