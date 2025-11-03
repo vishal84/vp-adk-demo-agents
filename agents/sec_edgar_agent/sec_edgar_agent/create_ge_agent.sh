@@ -30,7 +30,7 @@ done
 if [ -z "$REASONING_ENGINE" ]; then
     echo "❌ Error: REASONING_ENGINE is not set in .env"
     echo "   Deploy your agent first using: "
-    echo "   uv run adk deploy agent_engine --project=$GOOGLE_CLOUD_PROJECT --region=$GOOGLE_CLOUD_LOCATION --staging_bucket=$STAGING_BUCKET --trace_to_cloud --display_name=$AGENT_DISPLAY_NAME --description=$AGENT_DESCRIPTION ."
+    echo "   uv run adk deploy agent_engine --project=\"$GOOGLE_CLOUD_PROJECT\" --region=\"$GOOGLE_CLOUD_LOCATION\" --staging_bucket=\"$STAGING_BUCKET\" --trace_to_cloud --display_name=\"$AGENT_DISPLAY_NAME\" --description=\"$AGENT_DESCRIPTION\" ."
     echo "   Then update REASONING_ENGINE in .env with the resource name"
     exit 1
 fi
