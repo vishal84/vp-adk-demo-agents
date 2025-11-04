@@ -1,7 +1,7 @@
 [project]
 name = "sec_edgar_agent"
 version = "0.1.0"
-description = "Add your description here"
+description = "An ADK agent that interacts with the SEC EDGAR MCP server using end user authentication."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
