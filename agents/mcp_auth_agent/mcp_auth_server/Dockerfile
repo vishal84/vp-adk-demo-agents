@@ -5,10 +5,10 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Copy the dependencies file to the working directory
-COPY src/requirements.txt .
+COPY pyproject.toml .
 
 # Install any dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN uv sync
 
 # Copy the content of the local src directory to the working directory
 COPY src/ .

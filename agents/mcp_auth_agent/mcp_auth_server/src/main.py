@@ -1,12 +1,151 @@
+import asyncio
+import logging
 import os
-from flask import Flask
+from typing import List, Dict, Any
+from fastmcp import FastMCP
 
-app = Flask(__name__)
+logger = logging.getLogger(__name__)
+logging.basicConfig(format="[%(levelname)s]: %(message)s", level=logging.INFO)
 
-@app.route('/')
-def hello_world():
-    """Responds with a welcome message."""
-    return 'Hello, this is your MCP Server on Cloud Run!'
+mcp = FastMCP("BigQuery MCP Server")
+
+# Dictionary of sample data for different types of code snippets
+SAMPLE_DATA = [
+    {
+        "type": "sql",
+        "snippet": """SELECT
+                        o.order_id,
+                        o.order_date,
+                        c.customer_name,
+                        p.product_name,
+                        oi.quantity,
+                        oi.price_per_unit
+                    FROM
+                        orders AS o
+                    JOIN
+                        customers AS c ON o.customer_id = c.customer_id
+                    JOIN
+                        order_items AS oi ON o.order_id = oi.order_id
+                    JOIN
+                        products AS p ON oi.product_id = p.product_id
+                    WHERE
+                        o.order_date >= '2024-01-01'
+                    ORDER BY
+                        o.order_date DESC, c.customer_name ASC;
+                    """
+    },
+    {
+        "type": "python",
+        "snippet": """def find_even_numbers(numbers_list):
+                        '''
+                        Finds and returns all even numbers from a list of integers.
+
+                        Args:
+                            numbers_list (list): A list of integers.
+
+                        Returns:
+                            list: A new list containing only the even numbers from the input list.
+                        '''
+                        # A list comprehension is a concise way to create lists.
+                        # The expression iterates through each number in the input list
+                        # and includes it in the new list only if the condition (number % 2 == 0) is true.
+                        return [number for number in numbers_list if number % 2 == 0]
+
+                    # --- Example Usage ---
+                    my_numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                    even_numbers = find_even_numbers(my_numbers)
+
+                    print(f"Original list: {my_numbers}")
+                    print(f"Even numbers found: {even_numbers}")
+
+                    # --- Output ---
+                    # Original list: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                    # Even numbers found: [2, 4, 6, 8, 10, 12]
+                    """
+    },
+    {
+        "type": "javascript",
+        "snippet": """
+                    // A reference to the HTML element where we will display the user data.
+                    const userContainer = document.getElementById('user-container');
+
+                    /**
+                    * Fetches random user data from the Random User Generator API.
+                    * This is an 'async' function, which allows us to use 'await'.
+                    */
+                    async function getRandomUser() {
+                        try {
+                            // Use 'fetch' to make a network request to the API.
+                            // 'await' pauses the function until the request is complete.
+                            const response = await fetch('https://randomuser.me/api/');
+
+                            // Check if the network response was successful.
+                            if (!response.ok) {
+                                throw new Error(`Network response was not ok: ${response.statusText}`);
+                            }
+
+                            // Parse the JSON data from the response.
+                            // 'await' pauses the function until the JSON is fully parsed.
+                            const data = await response.json();
+                            
+                            // The API returns results in an array, so we get the first user.
+                            const user = data.results[0];
+
+                            // Call the function to display the user data on the page.
+                            displayUser(user);
+
+                        } catch (error) {
+                            // If anything goes wrong (network error, parsing error, etc.),
+                            // we catch the error here and display a message.
+                            console.error('Error fetching user data:', error);
+                            userContainer.innerHTML = '<p>Sorry, could not fetch a user. Please try again later.</p>';
+                        }
+                    }
+
+                    /**
+                    * Renders the user data into the userContainer element.
+                    * @param {object} user - The user object from the API.
+                    */
+                    function displayUser(user) {
+                        const userHTML = `
+                            <img src="${user.picture.large}" alt="User picture">
+                            <h2>${user.name.first} ${user.name.last}</h2>
+                            <p>Email: ${user.email}</p>
+                            <p>Location: ${user.location.city}, ${user.location.country}</p>
+                        `;
+                        
+                        // Replace the "Loading..." message with the new HTML.
+                        userContainer.innerHTML = userHTML;
+                    }
+
+                    // Call the function to fetch a user when the script loads.
+                    getRandomUser();
+                    """
+    }
+]
+
+@mcp.tool()
+def get_sample_data(type: str) -> List[Dict[str, Any]]:
+    """
+    Retrieves sample data.
+
+    Args:
+        type: The type of sample data to retrieve.
+
+    Returns:
+        A list of dictionaries, where each dictionary represents an animal
+        and contains details like name, age, enclosure, and trail.
+    """
+    logger.info(f">>> 🛠️ Tool: 'get_sample_data' called for '{type}'")
+    return [sample_data for sample_data in SAMPLE_DATA if sample_data["type"].lower() == type.lower()]
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+    port = int(os.getenv("PORT", 8080))
+    logger.info(f"🚀 MCP server started on port {port}")
+    asyncio.run(
+        mcp.run_async(
+            transport="http",
+            host="0.0.0.0",
+            port=port,
+        )
+    )

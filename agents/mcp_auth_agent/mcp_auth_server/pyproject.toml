@@ -1,0 +1,12 @@
+[project]
+name = "mcp_auth_server"
+version = "0.1.0"
+description = "A sample MCP server requiring auth."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastmcp>=2.12.5",
+    "google-adk>=1.16.0",
+    "pillow>=12.0.0",
+    "python-dotenv>=1.0.0",
+]
