@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "gsi-gemini-ent-tfstate" # The bucket you just created
-    prefix = "mcp_auth_server"        # This creates the "folder" structure
+    bucket = "gsi-gemini-ent-tfstate"
+    prefix = "mcp_auth_server" # folder under bucket for workload..
   }
 }
