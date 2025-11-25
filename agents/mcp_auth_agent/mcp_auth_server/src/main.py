@@ -127,14 +127,14 @@ SAMPLE_DATA = [
 @mcp.tool()
 def get_sample_data(type: str) -> List[Dict[str, Any]]:
     """
-    Retrieves sample data.
+    Retrieves sample code snippets by type.
 
     Args:
-        type: The type of sample data to retrieve.
+        type: The type of code snippet to retrieve (sql, python, or javascript).
 
     Returns:
-        A list of dictionaries, where each dictionary represents an animal
-        and contains details like name, age, enclosure, and trail.
+        A list of dictionaries containing code snippets matching the requested type.
+        Each dictionary has 'type' and 'snippet' fields.
     """
     logger.info(f">>> 🛠️ Tool: 'get_sample_data' called for '{type}'")
     return [sample_data for sample_data in SAMPLE_DATA if sample_data["type"].lower() == type.lower()]

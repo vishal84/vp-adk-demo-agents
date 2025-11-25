@@ -16,6 +16,8 @@ RUN uv sync --frozen --no-dev
 # Copy the content of the local src directory to the working directory
 COPY src/ .
 
-# Command to run the application
-# Gunicorn is a production-ready WSGI server. Cloud Run provides the $PORT environment variable.
-CMD exec uv run gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
+# Set PORT environment variable (Cloud Run will override this)
+ENV PORT=8080
+
+# Command to run the FastMCP application
+CMD exec uv run python main.py
