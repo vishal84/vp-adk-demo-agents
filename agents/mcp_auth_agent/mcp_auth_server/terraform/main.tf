@@ -25,7 +25,7 @@ resource "google_cloud_run_v2_service" "mcp_server" {
   }
 
   depends_on = [
-    google_project_service.run_api,
+    google_project_service.enable_apis,
     google_artifact_registry_repository.repo
   ]
 }
