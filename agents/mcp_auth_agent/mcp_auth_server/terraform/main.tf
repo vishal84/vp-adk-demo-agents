@@ -4,7 +4,7 @@ resource "google_artifact_registry_repository" "repo" {
   location      = var.gcp_region
   repository_id = "${var.service_name}-repo"
   format        = "DOCKER"
-  description   = "Docker repository for the BQ MCP server."
+  description   = "Docker repository for the Code Snippet MCP server."
 
   depends_on = [google_project_service.enable_apis]
 }
