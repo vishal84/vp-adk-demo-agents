@@ -22,3 +22,9 @@ variable "api_services" {
 variable "service_name" {
   description = "The name of the Cloud Run service."
 }
+
+variable "image_tag" {
+  description = "Docker image tag for deployment (unique per build)."
+  type        = string
+  default     = "latest"
+}
