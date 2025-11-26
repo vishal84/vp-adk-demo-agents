@@ -8,5 +8,5 @@ dependencies = [
     "fastmcp>=2.12.5",
     "google-adk>=1.16.0",
     "pillow>=12.0.0",
-    "python-dotenv>=1.0.0",
+    "python-dotenv>=1.0.0"
 ]
