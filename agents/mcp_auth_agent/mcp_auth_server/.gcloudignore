@@ -1,4 +1,4 @@
-# VP Add .gcloudignore file to speed up cloud build job deployment.
+# Add .gcloudignore file to speed up cloud build job deployment.
 # Ignore Python virtual environments
 .venv/
 venv/
