@@ -158,6 +158,30 @@ SAMPLE_DATA = [
                 ]
             }
         """)
+    },
+    {
+        "type": "go",
+        "snippet": textwrap.dedent("""
+            package main
+            import "fmt"
+
+            // findEvenNumbers returns a slice containing even numbers from input.
+            func findEvenNumbers(numbers []int) []int {
+                result := []int{}
+                for _, n := range numbers {
+                    if n%2 == 0 {
+                        result = append(result, n)
+                    }
+                }
+                return result
+            }
+
+            func main() {
+                nums := []int{1,2,3,4,5,6,7,8,9,10,11,12}
+                evens := findEvenNumbers(nums)
+                fmt.Printf("Original: %v\nEven: %v\n", nums, evens)
+            }
+        """)
     }
 ]
 
@@ -167,27 +191,25 @@ def get_code_snippet(type: str) -> str:
     Retrieves sample code snippets by type formatted as markdown.
 
     Args:
-        type: The type of code snippet to retrieve (sql, python, javascript, or json).
+        type: The type of code snippet to retrieve (sql, python, javascript, json, or go).
 
     Returns:
         A markdown-formatted string containing the code snippet with proper syntax highlighting.
         Returns an error message if the type is not found.
     """
-    logger.info(f">>> 🛠️ Tool: 'get_sample_data' called for '{type}'")
-    
-    matching_samples = [sample_data for sample_data in SAMPLE_DATA if sample_data["type"].lower() == type.lower()]
-    
+    logger.info(f">>> 🛠️ Tool: 'get_code_snippet' called for '{type}'")
+
+    matching_samples = [s for s in SAMPLE_DATA if s["type"].lower() == type.lower()]
+
     if not matching_samples:
-        return f"No sample data found for type: {type}. Available types: sql, python, javascript, json"
-    
+        available_types = ", ".join(sorted({s["type"] for s in SAMPLE_DATA}))
+        return f"No sample data found for type: {type}. Available types: {available_types}"
+
     sample = matching_samples[0]
     code_type = sample["type"]
     code_snippet = sample["snippet"].strip()
-    
-    # Format as markdown with code block
-    markdown = f"```{code_type}\n{code_snippet}\n```"
-    
-    return markdown
+
+    return f"```{code_type}\n{code_snippet}\n```"
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8080))
