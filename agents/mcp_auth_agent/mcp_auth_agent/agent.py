@@ -1,3 +1,4 @@
+// agents/mcp_auth_agent/mcp_auth_agent/agent.py
 import os
 from pathlib import Path
 
@@ -23,7 +24,7 @@ load_dotenv(dotenv_path=env_path)
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-MCP_SERVER_URL: str = os.getenv("MCP_SERVER_URL")
+MCP_SERVER_URL: str = os.getenv("MCP_SERVER_URL", "https://code-snippet-mcp-server-64898369892.us-central1.run.app/mcp")
 
 auth_scheme = OAuth2(
     flows=OAuthFlows(
