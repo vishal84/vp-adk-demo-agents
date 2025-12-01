@@ -1,7 +1,9 @@
-// agents/mcp_auth_agent/mcp_auth_agent/agent.py
 import os
+import logging
 from pathlib import Path
+from . import helper
 
+import google.auth
 import google.auth.transport.requests
 import google.oauth2.id_token
 
@@ -22,9 +24,12 @@ from dotenv import load_dotenv
 env_path = Path(__file__).parent / '.env'
 load_dotenv(dotenv_path=env_path)
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger()
+
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-MCP_SERVER_URL: str = os.getenv("MCP_SERVER_URL", "https://code-snippet-mcp-server-64898369892.us-central1.run.app/mcp")
+MCP_SERVER_URL: str = os.getenv("MCP_SERVER_URL")
 
 auth_scheme = OAuth2(
     flows=OAuthFlows(
@@ -71,8 +76,9 @@ def get_cloud_run_token(target_url: str) -> str:
         Requires the caller to have the run.invoker role on the Cloud Run service.
     """
     auth_req = google.auth.transport.requests.Request()
+    audience = target_url.split('/mcp')[0]
     try:
-        id_token = google.oauth2.id_token.fetch_id_token(auth_req, target_url)
+        id_token = google.oauth2.id_token.fetch_id_token(auth_req, audience)
         if not id_token:
             raise ValueError("Failed to fetch ID token: received None")
         return id_token
@@ -94,7 +100,9 @@ def mcp_header_provider(context) -> dict[str, str]:
         Exception: If unable to get Cloud Run token.
     """
     token = get_cloud_run_token(MCP_SERVER_URL)
-    
+    logger.info(f"Token: \n{token}")
+    logger.info(f"Context: \n{helper.context_to_json(context)}")
+
     return {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
