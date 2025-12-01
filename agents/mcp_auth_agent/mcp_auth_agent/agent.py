@@ -1,3 +1,4 @@
+// agents/mcp_auth_agent/mcp_auth_agent/agent.py
 import os
 from pathlib import Path
 
@@ -30,6 +31,7 @@ auth_scheme = OAuth2(
         authorizationCode=OAuthFlowAuthorizationCode(
             authorizationUrl="https://accounts.google.com/o/oauth2/auth",
             tokenUrl="https://oauth2.googleapis.com/token",
+            refreshUrl="https://oauth2.googleapis.com/token",
             scopes={
                 "https://www.googleapis.com/auth/cloud-platform": "Cloud platform scope",
                 "email": "Email access scope",
@@ -44,7 +46,8 @@ auth_credential = AuthCredential(
     auth_type=AuthCredentialTypes.OAUTH2,
     oauth2=OAuth2Auth(
         client_id=CLIENT_ID, 
-        client_secret=CLIENT_SECRET
+        client_secret=CLIENT_SECRET,
+        redirect_uri="http://localhost:8000/dev-ui/",
     ),
 )
 
