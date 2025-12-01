@@ -1,0 +1,17 @@
+[project]
+name = "mcp-auth-agent"
+version = "0.1.0"
+description = "A sample ADK agent requiring auth for MCP usage."
+requires-python = ">=3.12"
+dependencies = [
+    "google-adk>=1.19.0",
+    "python-dotenv>=1.0.0",
+    "google-auth>=2.0.0",
+]
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

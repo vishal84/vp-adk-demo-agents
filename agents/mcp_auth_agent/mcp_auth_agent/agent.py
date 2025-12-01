@@ -1,13 +1,19 @@
 import os
 from pathlib import Path
 
-from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+import google.auth.transport.requests
+import google.oauth2.id_token
+
 from fastapi.openapi.models import OAuth2
 from fastapi.openapi.models import OAuthFlowAuthorizationCode
 from fastapi.openapi.models import OAuthFlows
+
+from google.adk.agents import LlmAgent
 from google.adk.auth.auth_credential import AuthCredential
 from google.adk.auth.auth_credential import AuthCredentialTypes
 from google.adk.auth.auth_credential import OAuth2Auth
+from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
 from dotenv import load_dotenv
 
@@ -17,6 +23,7 @@ load_dotenv(dotenv_path=env_path)
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+MCP_SERVER_URL: str = os.getenv("MCP_SERVER_URL", "https://code-snippet-mcp-server-64898369892.us-central1.run.app/mcp")
 
 auth_scheme = OAuth2(
     flows=OAuthFlows(
@@ -41,24 +48,68 @@ auth_credential = AuthCredential(
     ),
 )
 
-def mcp_header_provider(context):
-    service_url = "https://sec-edgar-mcp-371617986509.us-central1.run.app" # Your Cloud Run service URL
-    token = get_cloud_run_token(service_url)
+def get_cloud_run_token(target_url: str) -> str:
+    """
+    Fetches an ID token for authenticating to a Cloud Run service.
+    
+    This function uses Application Default Credentials (ADC) to obtain an identity token
+    that can be used to authenticate requests to Cloud Run services that require authentication.
+    
+    Args:
+        target_url: The URL of the Cloud Run service to authenticate to.
+        
+    Returns:
+        str: The ID token that can be used in the Authorization header.
+        
+    Raises:
+        Exception: If unable to fetch the ID token (e.g., authentication failure).
+        
+    Note:
+        Requires the caller to have the run.invoker role on the Cloud Run service.
+    """
     auth_req = google.auth.transport.requests.Request()
     try:
-        token = google.oauth2.id_token.fetch_id_token(auth_req, service_url)
+        id_token = google.oauth2.id_token.fetch_id_token(auth_req, target_url)
+        if not id_token:
+            raise ValueError("Failed to fetch ID token: received None")
+        return id_token
     except Exception as e:
-        print(f"Error fetching Cloud Run ID token: {e}")
-        return None
+        print(f"Error fetching Cloud Run ID token for {target_url}: {e}")
+        raise
+
+def mcp_header_provider(context) -> dict[str, str]:
+    """
+    Provides authentication headers for MCP server requests.
+    
+    Args:
+        context: The context object from the MCP toolset.
+        
+    Returns:
+        dict: Headers including the Bearer token for authentication.
+        
+    Raises:
+        Exception: If unable to get Cloud Run token.
+    """
+    token = get_cloud_run_token(MCP_SERVER_URL)
+    
     return {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
         "Accept": "application/json, text/event-stream",
     }
 
-sec_edgar_mcp = McpToolset(
+cloud_run_mcp = McpToolset(
     connection_params=StreamableHTTPConnectionParams(
-        url="https://sec-edgar-mcp-371617986509.us-central1.run.app/mcp",
+        url=MCP_SERVER_URL,
     ),
-    header_provider=mcp_header_provider
+    header_provider=mcp_header_provider,
+    auth_scheme=auth_scheme,
+    auth_credential=auth_credential
+)
+
+root_agent = LlmAgent(
+    model='gemini-2.0-flash',
+    name='enterprise_assistant',
+    instruction='Help user integrate with multiple enterprise systems, including retrieving user information which may require authentication.',
+    tools=[cloud_run_mcp],
 )
