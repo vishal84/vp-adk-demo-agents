@@ -6,6 +6,9 @@ from . import helper
 import google.auth
 import google.auth.transport.requests
 import google.oauth2.id_token
+from google.oauth2 import service_account
+from google.auth import impersonated_credentials
+
 
 from fastapi.openapi.models import OAuth2
 from fastapi.openapi.models import OAuthFlowAuthorizationCode
@@ -29,8 +32,8 @@ logger = logging.getLogger()
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-MCP_SERVER_URL: str = os.getenv("MCP_SERVER_URL")
-GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+MCP_SERVER_URL = os.getenv("MCP_SERVER_URL")
+SERVICE_ACCOUNT_EMAIL = os.getenv("SERVICE_ACCOUNT_EMAIL")
 
 auth_scheme = OAuth2(
     flows=OAuthFlows(
@@ -53,7 +56,7 @@ auth_credential = AuthCredential(
     oauth2=OAuth2Auth(
         client_id=CLIENT_ID, 
         client_secret=CLIENT_SECRET,
-        redirect_uri="http://localhost:8000/dev-ui/",
+        redirect_uri="http://127.0.0.1:8000/dev-ui/",
     ),
 )
 
@@ -77,10 +80,44 @@ def get_cloud_run_token(target_url: str) -> str:
         Requires the caller to have the run.invoker role on the Cloud Run service.
     """
     auth_req = google.auth.transport.requests.Request()
+
+    target_scopes = [
+        "https://www.googleapis.com/auth/cloud-platform",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+    ]
+
+    # source_credentials = (
+    #     service_account.Credentials.from_service_account_file(
+    #         GOOGLE_APPLICATION_CREDENTIALS,
+    #         scopes=target_scopes
+    #     )
+    # )
+    print("Loading source credentials from environment (ADC)...")
+    source_credentials, project_id = google.auth.default()
     audience = target_url.split('/mcp')[0]
+    
+    logger.info(f"Source Credentials: {helper.context_to_json(source_credentials)}")
+
+    target_credentials = impersonated_credentials.Credentials(
+        source_credentials=source_credentials,
+        target_principal=SERVICE_ACCOUNT_EMAIL,
+        target_scopes = target_scopes,
+    )
+
+    jwt_token = impersonated_credentials.IDTokenCredentials(
+        target_credentials=target_credentials,
+        target_audience=audience,
+        include_email=True,
+    )
 
     try:
-        id_token = google.oauth2.id_token.fetch_id_token(auth_req, audience)
+        # id_token = google.oauth2.id_token.fetch_id_token(auth_req, audience)
+        jwt_token.refresh(auth_req)
+        id_token = jwt_token.token
+
+        logger.info(f"ID token: {id_token}")
+
         if not id_token:
             raise ValueError("Failed to fetch ID token: received None")
         return id_token
@@ -121,8 +158,13 @@ cloud_run_mcp = McpToolset(
 )
 
 root_agent = LlmAgent(
-    model='gemini-2.0-flash',
-    name='enterprise_assistant',
-    instruction='Help user integrate with multiple enterprise systems, including retrieving user information which may require authentication.',
+    model="gemini-2.5-pro",
+    name="code_snippet_mcp_agent",
+    instruction="""You are a helpful agent that has access to an MCP tool used to retrieve code snippets.
+    - If a user asks what you can do, answer that you can provide code snippets from the MCP tool you have access to.
+    - Provide the function name to call to ask for a snippet:
+    - `get_snippet("<type>")` where <type> can be sql, python, javascript, json, or go.
+    - Always use the MCP tool to get code snippets, never make up code snippets on your own.
+    """,
     tools=[cloud_run_mcp],
 )
