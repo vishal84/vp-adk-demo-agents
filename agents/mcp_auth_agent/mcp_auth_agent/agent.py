@@ -30,6 +30,7 @@ logger = logging.getLogger()
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 MCP_SERVER_URL: str = os.getenv("MCP_SERVER_URL")
+GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 auth_scheme = OAuth2(
     flows=OAuthFlows(
@@ -77,6 +78,7 @@ def get_cloud_run_token(target_url: str) -> str:
     """
     auth_req = google.auth.transport.requests.Request()
     audience = target_url.split('/mcp')[0]
+
     try:
         id_token = google.oauth2.id_token.fetch_id_token(auth_req, audience)
         if not id_token:
@@ -99,12 +101,12 @@ def mcp_header_provider(context) -> dict[str, str]:
     Raises:
         Exception: If unable to get Cloud Run token.
     """
-    token = get_cloud_run_token(MCP_SERVER_URL)
-    logger.info(f"Token: \n{token}")
+    id_token = get_cloud_run_token(MCP_SERVER_URL)
+    logger.info(f"Token: \n{id_token}")
     logger.info(f"Context: \n{helper.context_to_json(context)}")
 
     return {
-        "Authorization": f"Bearer {token}",
+        "Authorization": f"Bearer {id_token}",
         "Content-Type": "application/json",
         "Accept": "application/json, text/event-stream",
     }
