@@ -94,7 +94,7 @@ def get_cloud_run_token(target_url: str) -> str:
     #     )
     # )
     logger.info("Loading source credentials from environment (ADC)...")
-    source_credentials, project_id = google.auth.default()
+    source_credentials, _ = google.auth.default()
     audience = target_url.split('/mcp')[0]
     
     logger.info(f"Source Credentials: {helper.context_to_json(source_credentials)}")
