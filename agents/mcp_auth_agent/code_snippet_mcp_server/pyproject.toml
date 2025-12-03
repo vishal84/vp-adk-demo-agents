@@ -1,7 +1,7 @@
 [project]
-name = "mcp_auth_server"
+name = "code_snippet_mcp_server"
 version = "0.1.0"
-description = "A sample MCP server requiring auth."
+description = "A sample Cloud Run MCP server requiring auth."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

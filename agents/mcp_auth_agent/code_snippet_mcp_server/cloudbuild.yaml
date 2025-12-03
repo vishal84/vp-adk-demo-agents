@@ -73,7 +73,7 @@ steps:
           echo "Total revisions: $total. No cleanup needed (keeping all)."
         fi
 
-# Substitution variables
+# Substitution variables - should match .env file
 substitutions:
   _REGION: 'us-central1'
   _REPO_NAME: 'code-snippet-mcp-server-repo'

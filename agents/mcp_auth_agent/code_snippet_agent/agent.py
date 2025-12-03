@@ -159,7 +159,7 @@ cloud_run_mcp = McpToolset(
 
 root_agent = LlmAgent(
     model="gemini-2.5-pro",
-    name="code_snippet_mcp_agent",
+    name="code_snippet_agent",
     instruction="""You are a helpful agent that has access to an MCP tool used to retrieve code snippets.
     - If a user asks what you can do, answer that you can provide code snippets from the MCP tool you have access to.
     - Provide the function name to call to ask for a snippet:
