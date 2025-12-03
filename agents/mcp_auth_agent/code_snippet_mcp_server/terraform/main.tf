@@ -41,7 +41,3 @@ resource "google_cloud_run_service_iam_binding" "iam_invoker" {
   ]
 }
 
-# Output the URL of the deployed service
-output "service_url" {
-  value = google_cloud_run_v2_service.mcp_server.uri
-}
