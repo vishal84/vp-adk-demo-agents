@@ -18,3 +18,10 @@ resource "google_project_iam_member" "writer" {
   role    = "roles/logging.logWriter"
   member  = "serviceAccount:${google_service_account.code_snippet_agent_sa.email}"
 }
+
+# Granting the user the ability to impersonate the service account
+resource "google_service_account_iam_member" "token_creator" {
+  service_account_id = google_service_account.code_snippet_agent_sa.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "user:${var.username}"
+}
