@@ -10,6 +10,10 @@ variable "username" {
   description = "The GCP user in the project who can impersonate the service account TF creates toinvoke the Cloud Run service."
 }
 
+variable "service_name" {
+  description = "The name of the Cloud Run service."
+}
+
 variable "service_account_name" {
   description = "The name of the service account to be created."
 }
@@ -18,11 +22,12 @@ variable "service_account_display_name" {
   description = "The display name of the service account to be created."
 }
 
-variable "service_name" {
-  description = "The name of the Cloud Run service."
+variable "oauth_application_title" {
+  description = "The title of the OAuth application for the consent screen."
 }
 
-output "code_snippet_agent_service_account_email" {
-  description = "The email of the service account created for the code snippet agent."
-  value       = google_service_account.code_snippet_agent_sa.email
+variable "create_brand" {
+  description = "Whether to create the OAuth consent screen brand."
+  type        = bool
+  default     = true
 }
