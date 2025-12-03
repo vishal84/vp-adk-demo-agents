@@ -21,13 +21,3 @@ variable "service_account_name" {
 variable "service_account_display_name" {
   description = "The display name of the service account to be created."
 }
-
-variable "oauth_application_title" {
-  description = "The title of the OAuth application for the consent screen."
-}
-
-variable "create_brand" {
-  description = "Whether to create the OAuth consent screen brand."
-  type        = bool
-  default     = true
-}
