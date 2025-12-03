@@ -9,7 +9,6 @@ import google.oauth2.id_token
 from google.oauth2 import service_account
 from google.auth import impersonated_credentials
 
-
 from fastapi.openapi.models import OAuth2
 from fastapi.openapi.models import OAuthFlowAuthorizationCode
 from fastapi.openapi.models import OAuthFlows
@@ -94,7 +93,7 @@ def get_cloud_run_token(target_url: str) -> str:
     #         scopes=target_scopes
     #     )
     # )
-    print("Loading source credentials from environment (ADC)...")
+    logger.info("Loading source credentials from environment (ADC)...")
     source_credentials, project_id = google.auth.default()
     audience = target_url.split('/mcp')[0]
     
