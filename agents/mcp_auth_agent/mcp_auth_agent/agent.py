@@ -43,9 +43,9 @@ auth_scheme = OAuth2(
             refreshUrl="https://oauth2.googleapis.com/token",
             scopes={
                 "https://www.googleapis.com/auth/cloud-platform": "Cloud platform scope",
-                "email": "Email access scope",
+                "https://www.googleapis.com/auth/userinfo.email": "Email access scope",
+                "https://www.googleapis.com/auth/userinfo.profile": "Profile access scope",
                 "openid": "OpenID Connect scope",
-                "profile": "Profile access scope",
             },
         )
     )
@@ -85,6 +85,7 @@ def get_cloud_run_token(target_url: str) -> str:
         "https://www.googleapis.com/auth/cloud-platform",
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
+        "openid"
     ]
 
     # source_credentials = (
