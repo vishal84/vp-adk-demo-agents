@@ -75,9 +75,9 @@ steps:
 
 # Substitution variables - should match .env file
 substitutions:
-  _REGION: 'us-central1'
-  _REPO_NAME: 'code-snippet-mcp-server-repo'
-  _SERVICE_NAME: 'code-snippet-mcp-server'
+  _REGION: ''
+  _REPO_NAME: ''
+  _SERVICE_NAME: ''
 
 # Timeout for the entire build
 timeout: '1200s'

@@ -7,10 +7,10 @@ if [ -f .env ]; then
 fi
 
 # Set defaults if not provided
-REGION=${REGION:-us-central1}
-REPO_NAME=${REPO_NAME:-code-snippet-mcp-server-repo}
-SERVICE_NAME=${SERVICE_NAME:-code-snippet-mcp-server}
-PROJECT_ID=${PROJECT_ID:-gsi-gemini-ent}
+REGION=${REGION}
+REPO_NAME=${REPO_NAME}
+SERVICE_NAME=${SERVICE_NAME}
+PROJECT_ID=${PROJECT_ID}
 
 echo "🚀 Starting Cloud Build with the following configuration:"
 echo "   Project: ${PROJECT_ID}"
