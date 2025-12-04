@@ -5,6 +5,9 @@ steps:
       - 'build'
       - '-t'
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/${_SERVICE_NAME}:latest'
+      # Add the specific tag passed from Terraform (_BUILD_ID)
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/${_SERVICE_NAME}:${_BUILD_ID}'
       - '.'
     dir: '.'
 
@@ -15,69 +18,12 @@ steps:
       - '--all-tags'
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/${_SERVICE_NAME}'
 
-  # Step 3: Initialize Terraform
-  - name: 'hashicorp/terraform:1.6'
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - |
-        cd terraform
-        terraform init
-
-  # Step 4: Apply Terraform (creates or updates Cloud Run service)
-  - name: 'hashicorp/terraform:1.6'
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - |
-        cd terraform
-        terraform apply -var-file=terraform.tfvars -auto-approve
-
-  # Step 5: Clean up old revisions (keep only 2 most recent)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        # Get all revisions sorted by creation time (oldest first)
-        revisions=$(gcloud run revisions list \
-          --service=${_SERVICE_NAME} \
-          --region=${_REGION} \
-          --project=${PROJECT_ID} \
-          --format="value(name)" \
-          --sort-by="~metadata.creationTimestamp")
-        
-        # Count total revisions
-        total=$(echo "$revisions" | wc -l)
-        
-        # Calculate how many to delete (keep 2 most recent)
-        to_delete=$((total - 2))
-        
-        if [ $to_delete -gt 0 ]; then
-          echo "Found $total revisions. Deleting $to_delete old revision(s)..."
-          
-          # Get the revisions to delete (oldest ones)
-          old_revisions=$(echo "$revisions" | head -n $to_delete)
-          
-          # Delete each old revision
-          for revision in $old_revisions; do
-            echo "Deleting revision: $revision"
-            gcloud run revisions delete $revision \
-              --region=${_REGION} \
-              --project=${PROJECT_ID} \
-              --quiet || echo "Failed to delete $revision (may already be deleted)"
-          done
-          
-          echo "Cleanup complete. Kept 2 most recent revisions."
-        else
-          echo "Total revisions: $total. No cleanup needed (keeping all)."
-        fi
-
 # Substitution variables - should match .env file
 substitutions:
   _REGION: ''
   _REPO_NAME: ''
   _SERVICE_NAME: ''
+  _BUILD_ID: ''
 
 # Timeout for the entire build
 timeout: '1200s'
@@ -89,4 +35,4 @@ options:
 
 # Images to be pushed (for Cloud Build history)
 images:
-  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/${_SERVICE_NAME}:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/${_SERVICE_NAME}:${_BUILD_ID}'

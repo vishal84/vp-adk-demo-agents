@@ -9,6 +9,28 @@ resource "google_artifact_registry_repository" "repo" {
   depends_on = [google_project_service.enable_apis]
 }
 
+# Trigger Cloud Build to build and push the image
+resource "null_resource" "build_and_push_image" {
+  triggers = {
+    # Re-run if the source code or cloudbuild.yaml changes
+    src_hash = local.source_hash
+  }
+
+  provisioner "local-exec" {
+    working_dir = "${path.module}/.."
+    # Pass the calculated hash as the BUILD_ID substitution to Cloud Build
+    command = <<EOT
+      gcloud builds submit \
+        --config=cloudbuild.yaml \
+        --project=${var.gcp_project_id} \
+        --region=${var.gcp_region} \
+        --substitutions=_REGION=${var.gcp_region},_REPO_NAME=${google_artifact_registry_repository.repo.repository_id},_SERVICE_NAME=${var.service_name},_BUILD_ID=${local.source_hash}
+    EOT
+  }
+
+  depends_on = [google_artifact_registry_repository.repo]
+}
+
 # 3. Deploy the service to Cloud Run
 resource "google_cloud_run_v2_service" "mcp_server" {
   project  = var.gcp_project_id
@@ -26,7 +48,8 @@ resource "google_cloud_run_v2_service" "mcp_server" {
 
   depends_on = [
     google_project_service.enable_apis,
-    google_artifact_registry_repository.repo
+    google_artifact_registry_repository.repo,
+    null_resource.build_and_push_image
   ]
 }
 
