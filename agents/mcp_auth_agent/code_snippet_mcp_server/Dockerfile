@@ -10,8 +10,8 @@ WORKDIR /app
 # Copy dependency files
 COPY pyproject.toml uv.lock* ./
 
-# Install dependencies
-RUN uv sync --frozen --no-dev
+# Install dependencies add --frozen to ensure lockfile is used
+RUN uv sync --no-dev
 
 # Copy the content of the local src directory to the working directory
 COPY src/ .

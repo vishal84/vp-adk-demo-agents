@@ -4,8 +4,8 @@ data "google_project" "project" {
 }
 
 locals {
-  # Calculate hash of src directory and cloudbuild.yaml file, if either changes the build will update cloud run
-  source_hash = sha1(join("", [for f in fileset("${path.module}/../src", "**") : filesha1("${path.module}/../src/${f}")], [filesha1("${path.module}/../cloudbuild.yaml")]))
+  # Calculate hash of src directory, cloudbuild.yaml file, and Dockerfile, if any changes the build will update cloud run
+  source_hash = sha1(join("", [for f in fileset("${path.module}/../src", "**") : filesha1("${path.module}/../src/${f}")], [filesha1("${path.module}/../cloudbuild.yaml")], [filesha1("${path.module}/../Dockerfile")]))
 
   # Use the hash as the image tag. This ensures the image string changes when code changes.
   image_name = "${var.gcp_region}-docker.pkg.dev/${var.gcp_project_id}/${google_artifact_registry_repository.repo.repository_id}/${var.service_name}:${local.source_hash}"
