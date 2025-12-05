@@ -1,0 +1,26 @@
+steps:
+  # Step 1: Initialize Terraform
+  - name: 'hashicorp/terraform:1.6'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        cd terraform
+        terraform init
+
+  # Step 2: Apply Terraform
+  - name: 'hashicorp/terraform:1.6'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        cd terraform
+        terraform apply -var-file=terraform.tfvars -auto-approve
+
+# Timeout for the entire build
+timeout: '1200s'
+
+# Options
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY

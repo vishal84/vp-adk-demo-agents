@@ -9,7 +9,6 @@ import google.oauth2.id_token
 from google.oauth2 import service_account
 from google.auth import impersonated_credentials
 
-
 from fastapi.openapi.models import OAuth2
 from fastapi.openapi.models import OAuthFlowAuthorizationCode
 from fastapi.openapi.models import OAuthFlows
@@ -43,9 +42,9 @@ auth_scheme = OAuth2(
             refreshUrl="https://oauth2.googleapis.com/token",
             scopes={
                 "https://www.googleapis.com/auth/cloud-platform": "Cloud platform scope",
-                "email": "Email access scope",
+                "https://www.googleapis.com/auth/userinfo.email": "Email access scope",
+                "https://www.googleapis.com/auth/userinfo.profile": "Profile access scope",
                 "openid": "OpenID Connect scope",
-                "profile": "Profile access scope",
             },
         )
     )
@@ -85,6 +84,7 @@ def get_cloud_run_token(target_url: str) -> str:
         "https://www.googleapis.com/auth/cloud-platform",
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
+        "openid"
     ]
 
     # source_credentials = (
@@ -93,8 +93,8 @@ def get_cloud_run_token(target_url: str) -> str:
     #         scopes=target_scopes
     #     )
     # )
-    print("Loading source credentials from environment (ADC)...")
-    source_credentials, project_id = google.auth.default()
+    logger.info("Loading source credentials from environment (ADC)...")
+    source_credentials, _ = google.auth.default()
     audience = target_url.split('/mcp')[0]
     
     logger.info(f"Source Credentials: {helper.context_to_json(source_credentials)}")
@@ -159,7 +159,7 @@ cloud_run_mcp = McpToolset(
 
 root_agent = LlmAgent(
     model="gemini-2.5-pro",
-    name="code_snippet_mcp_agent",
+    name="code_snippet_agent",
     instruction="""You are a helpful agent that has access to an MCP tool used to retrieve code snippets.
     - If a user asks what you can do, answer that you can provide code snippets from the MCP tool you have access to.
     - Provide the function name to call to ask for a snippet:

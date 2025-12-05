@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
     bucket = "gsi-gemini-ent-tfstate"
-    prefix = "mcp_auth_server" # folder under bucket for workload..
+    prefix = "code_snippet_agent_adk_web"
   }
 }
