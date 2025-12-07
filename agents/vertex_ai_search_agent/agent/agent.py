@@ -2,7 +2,7 @@ import os
 import logging
 from anyio import Path
 from google.adk.agents import Agent
-from google.adk.tools import VertexAiSearchTool
+from google.adk.tools.vertex_ai_search_tool import VertexAiSearchTool
 from dotenv import load_dotenv
 
 # Load environment variables from the same directory as this file
