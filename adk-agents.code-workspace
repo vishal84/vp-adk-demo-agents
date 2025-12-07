@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "agents/code_executor_agent"
+		},
+		{
+			"path": "agents/vertex_ai_search_agent"
+		}
+	],
+	"settings": {}
+}
