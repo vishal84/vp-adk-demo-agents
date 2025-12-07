@@ -16,6 +16,9 @@
 			"path": "agents/mcp_auth_agent/code_snippet_mcp_server"
 		},
 		{
+			"path": "agents/mcp_auth_agent/multi_tool_agent"
+		},
+		{
 			"path": "agents/vertex_ai_search_agent"
 		}
 	],
