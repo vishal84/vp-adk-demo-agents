@@ -1,4 +1,4 @@
-from google.adk.agents import Agent
+from google.adk.agents import LlmAgent
 
 def get_weather(city: str) -> dict:
     """Retrieves the current weather report for a specified city.
@@ -33,7 +33,7 @@ def get_current_time(city:str) -> dict:
     return {"status": "success",
             "report": f"""The current time in {city} is {now.strftime("%Y-%m-%d %H:%M:%S %Z%z")}"""}
 
-root_agent = Agent(
+root_agent = LlmAgent(
     name="weather_time_agent",
     model="gemini-2.0-flash",
     description="Agent to answer questions about the time and weather in a city.",

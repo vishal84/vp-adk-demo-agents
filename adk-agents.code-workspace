@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "agents/code_executor_agent"
+		},
+		{
+			"path": "agents/file_processing_agent"
+		},
+		{
+			"path": "agents/mcp_auth_agent/code_snippet_agent_adk_web"
+		},
+		{
+			"path": "agents/mcp_auth_agent/code_snippet_mcp_server"
+		},
+		{
+			"path": "agents/multi_tool_agent"
+		},
+		{
+			"path": "agents/vertex_ai_search_agent"
+		}
+	],
+	"settings": {}
+}

@@ -1,0 +1,19 @@
+[project]
+name = "vertex-ai-search-agent"
+version = "0.1.0"
+description = "A sample ADK agent that uses Vertex AI Search Tool."
+requires-python = ">=3.12"
+dependencies = [
+    "google-adk>=1.18.0",
+    "python-dotenv>=1.0.0",
+]
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["agent"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
