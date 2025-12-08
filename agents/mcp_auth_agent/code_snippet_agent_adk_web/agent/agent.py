@@ -31,7 +31,7 @@ logger = logging.getLogger()
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL")
+MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "MCP SERVER URL NOT SET")
 SERVICE_ACCOUNT_EMAIL = os.getenv("SERVICE_ACCOUNT_EMAIL")
 
 auth_scheme = OAuth2(
