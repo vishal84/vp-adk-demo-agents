@@ -39,8 +39,21 @@ if [ ! -f "${SCHEMA_FILE}" ]; then
   exit 1
 fi
 
+# Check if file is a JSON array and convert to NDJSON if needed
+FIRST_CHAR=$(head -c 1 "${DATA_FILE}")
+LOAD_FILE="${DATA_FILE}"
+CLEANUP_FILE=""
+
+if [ "$FIRST_CHAR" == "[" ]; then
+    echo "Detected JSON array. Converting to NDJSON and adding 'id' field..."
+    CLEANUP_FILE="${DATA_FILE}.ndjson"
+    # Convert to NDJSON and ensure 'id' field exists (copy from personId if missing)
+    jq -c '.[] | if has("id") then . else . + {id: .personId} end' "${DATA_FILE}" > "${CLEANUP_FILE}"
+    LOAD_FILE="${CLEANUP_FILE}"
+fi
+
 # Construct the full table reference
-TABLE_REF="${PROJECT_ID}:${DATASET_ID}.${TABLE_ID}"
+TABLE_REF="${GOOGLE_CLOUD_PROJECT}:${DATASET_ID}.${TABLE_ID}"
 
 # Attempt to create the table first. If it exists, bq load will append/overwrite.
 echo "Checking if table '${TABLE_REF}' exists..."
@@ -53,24 +66,26 @@ if bq show --format=prettyjson "${TABLE_REF}" > /dev/null 2>&1; then
     --schema="${SCHEMA_FILE}" \
     --replace \
     "${TABLE_REF}" \
-    "${DATA_FILE}"
+    "${LOAD_FILE}"
 else
   echo "Table '${TABLE_REF}' does not exist. Creating and loading data."
   bq load \
     --source_format=NEWLINE_DELIMITED_JSON \
     --schema="${SCHEMA_FILE}" \
     "${TABLE_REF}" \
-    "${DATA_FILE}"
+    "${LOAD_FILE}"
 fi
 
 # Check the exit status of the bq command
 if [ $? -eq 0 ]; then
   echo "--- Data import successful! ---"
-  echo "You can view your data at: https://console.cloud.google.com/bigquery?project=${PROJECT_ID}&p=${PROJECT_ID}&d=${DATASET_ID}&t=${TABLE_ID}&page=table"
+  echo "You can view your data at: https://console.cloud.google.com/bigquery?project=${GOOGLE_CLOUD_PROJECT}&p=${GOOGLE_CLOUD_PROJECT}&d=${DATASET_ID}&t=${TABLE_ID}&page=table"
 else
   echo "--- Data import failed. Please check the error messages above. ---"
 fi
 
-# Clean up the temporary schema file
-# rm "${SCHEMA_FILE}"
-# echo "Cleaned up temporary schema file: ${SCHEMA_FILE}"
+# Clean up temporary file if created
+if [ -n "${CLEANUP_FILE}" ] && [ -f "${CLEANUP_FILE}" ]; then
+    rm "${CLEANUP_FILE}"
+    echo "Cleaned up temporary NDJSON file."
+fi

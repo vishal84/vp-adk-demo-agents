@@ -1,5 +1,11 @@
 [
   {
+    "name": "id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "The unique identifier for the person."
+  },
+  {
     "name": "personId",
     "type": "STRING",
     "mode": "NULLABLE",
@@ -106,25 +112,25 @@
   },
   {
     "name": "creationDate",
-    "type": "DATETIME",
+    "type": "TIMESTAMP",
     "mode": "NULLABLE",
     "description": "The person’s creation date in the source system."
   },
   {
     "name": "modifiedDate",
-    "type": "DATETIME",
+    "type": "TIMESTAMP",
     "mode": "NULLABLE",
     "description": "The person’s last modified date in the source system."
   },
   {
     "name": "deletionDate",
-    "type": "DATETIME",
+    "type": "TIMESTAMP",
     "mode": "NULLABLE",
     "description": "The person’s deletion date in the source system."
   },
   {
     "name": "hireDate",
-    "type": "DATETIME",
+    "type": "TIMESTAMP",
     "mode": "NULLABLE",
     "description": "The date when the person was hired."
   },
