@@ -1,0 +1,287 @@
+[
+  {
+    "name": "id",
+    "type": "STRING",
+    "mode": "REQUIRED",
+    "description": "The unique identifier for the person."
+  },
+  {
+    "name": "personId",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The person’s unique ID. Required field. The value of the personId field must be the same as the id of the document."
+  },
+  {
+    "name": "name",
+    "type": "RECORD",
+    "mode": "NULLABLE",
+    "fields": [
+      {
+        "name": "familyName",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The person’s family name/last name."
+      },
+      {
+        "name": "givenName",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The person’s given name/first name."
+      },
+      {
+        "name": "displayName",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The person’s display name."
+      },
+      {
+        "name": "username",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The person’s username."
+      }
+    ]
+  },
+  {
+    "name": "emails",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {
+        "name": "type",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The type of the email account, such as \"work\", \"home\", \"other\", or \"custom\"."
+      },
+      {
+        "name": "value",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The person's email address, such as \"acruz@example.net\"."
+      }
+    ]
+  },
+  {
+    "name": "phoneNumbers",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {
+        "name": "type",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The type of the phone number, such as \"office\", \"mobile\", or \"other\"."
+      },
+      {
+        "name": "value",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The person's phone number, such as \"+1 800-555-1212\"."
+      }
+    ]
+  },
+  {
+    "name": "suspended",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Whether the person is suspended with the organization."
+  },
+  {
+    "name": "employeeId",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The person’s employee ID."
+  },
+  {
+    "name": "employeeType",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The person’s employee type, such as \"FTE\", \"Intern\", or \"Temp\"."
+  },
+  {
+    "name": "employmentStatus",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The person’s employment status."
+  },
+  {
+    "name": "availabilityStatus",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The person’s availability status, such as \"OOO\", \"WFH\", or \"In Meeting\"."
+  },
+  {
+    "name": "creationDate",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "The person’s creation date in the source system."
+  },
+  {
+    "name": "modifiedDate",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "The person’s last modified date in the source system."
+  },
+  {
+    "name": "deletionDate",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "The person’s deletion date in the source system."
+  },
+  {
+    "name": "hireDate",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "The date when the person was hired."
+  },
+  {
+    "name": "gender",
+    "type": "RECORD",
+    "mode": "NULLABLE",
+    "fields": [
+      {
+        "name": "addressMeAs",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The person’s preferred pronoun choice, such as \"he/him\", \"she/her\", or \"they/them\"."
+      },
+      {
+        "name": "type",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The person’s gender, such as \"male\", \"female\", or \"other\"."
+      }
+    ]
+  },
+  {
+    "name": "displayPhoto",
+    "type": "RECORD",
+    "mode": "NULLABLE",
+    "fields": [
+      {
+        "name": "url",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The URL of the photo."
+      },
+      {
+        "name": "imageBinary",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The Base64 encoded string of the image binary of the photo."
+      },
+      {
+        "name": "format",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The format of the image binary, such as “png”."
+      }
+    ]
+  },
+  {
+    "name": "addresses",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      { "name": "country", "type": "STRING", "mode": "NULLABLE", "description": "The country of the associated address." },
+      { "name": "countryCode", "type": "STRING", "mode": "NULLABLE", "description": "The country code of the associated address." },
+      { "name": "locality", "type": "STRING", "mode": "NULLABLE", "description": "The locality of the associated address." },
+      { "name": "poBox", "type": "STRING", "mode": "NULLABLE", "description": "The PO Box of the associated address." },
+      { "name": "postalCode", "type": "STRING", "mode": "NULLABLE", "description": "The postal code of the associated address." },
+      { "name": "region", "type": "STRING", "mode": "NULLABLE", "description": "The region of the associated address." },
+      { "name": "streetAddress", "type": "STRING", "mode": "NULLABLE", "description": "The associated street address." },
+      { "name": "type", "type": "STRING", "mode": "NULLABLE", "description": "The type of the associated address." }
+    ]
+  },
+  {
+    "name": "location",
+    "type": "RECORD",
+    "mode": "NULLABLE",
+    "fields": [
+      { "name": "value", "type": "STRING", "mode": "NULLABLE", "description": "The person's office location." },
+      { "name": "buildingId", "type": "STRING", "mode": "NULLABLE", "description": "The building ID of the person's office location." },
+      { "name": "deskCode", "type": "STRING", "mode": "NULLABLE", "description": "The desk code of the person's office location." },
+      { "name": "floorName", "type": "STRING", "mode": "NULLABLE", "description": "The floor name of the person's office location." },
+      { "name": "floorSection", "type": "STRING", "mode": "NULLABLE", "description": "The floor section of the location." },
+      { "name": "type", "type": "STRING", "mode": "NULLABLE", "description": "The type of the location." }
+    ]
+  },
+  {
+    "name": "organizations",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      { "name": "department", "type": "STRING", "mode": "NULLABLE", "description": "The department of the organization." },
+      { "name": "description", "type": "STRING", "mode": "NULLABLE", "description": "The description of the organization." },
+      { "name": "jobTitle", "type": "STRING", "mode": "NULLABLE", "description": "The person’s job title." },
+      { "name": "location", "type": "STRING", "mode": "NULLABLE", "description": "The location of the organization." },
+      { "name": "name", "type": "STRING", "mode": "NULLABLE", "description": "The name of the organization." },
+      { "name": "symbol", "type": "STRING", "mode": "NULLABLE", "description": "The ticker symbol of the organization." },
+      { "name": "costCenter", "type": "STRING", "mode": "NULLABLE", "description": "The cost center of the organization." },
+      { "name": "type", "type": "STRING", "mode": "NULLABLE", "description": "The type of the organization." },
+      {
+        "name": "projects",
+        "type": "RECORD",
+        "mode": "REPEATED",
+        "fields": [
+          { "name": "name", "type": "STRING", "mode": "NULLABLE", "description": "The name of the person's assigned project." },
+          { "name": "description", "type": "STRING", "mode": "NULLABLE", "description": "The description of the person's assigned project." },
+          { "name": "role", "type": "STRING", "mode": "NULLABLE", "description": "The role of the person in the project." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "managers",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      { "name": "personId", "type": "STRING", "mode": "NULLABLE", "description": "The personId of the person’s current management chain." },
+      { "name": "email", "type": "STRING", "mode": "NULLABLE", "description": "The email address of each manager in the person’s current management chain." }
+    ]
+  },
+  {
+    "name": "dottedLineReports",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      { "name": "personId", "type": "STRING", "mode": "NULLABLE", "description": "The person's dotted line report(s) (personId)." },
+      { "name": "email", "type": "STRING", "mode": "NULLABLE", "description": "The person's dotted line reports (email)." }
+    ]
+  },
+  {
+    "name": "topCoworkers",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      { "name": "personId", "type": "STRING", "mode": "NULLABLE", "description": "The person’s coworker(s) (personId)." },
+      { "name": "affinityScore", "type": "NUMERIC", "mode": "NULLABLE", "description": "The person’s affinity score relative to coworkers." }
+    ]
+  },
+  {
+    "name": "admins",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      { "name": "personId", "type": "STRING", "mode": "NULLABLE", "description": "Person's assigned admin(s) (personId)." },
+      { "name": "email", "type": "STRING", "mode": "NULLABLE", "description": "Person's assigned admins (email)." }
+    ]
+  },
+  {
+    "name": "websites",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      { "name": "type", "type": "STRING", "mode": "NULLABLE", "description": "Person's website type." },
+      { "name": "value", "type": "STRING", "mode": "NULLABLE", "description": "The URL of the website." }
+    ]
+  },
+  {
+    "name": "directManager",
+    "type": "RECORD",
+    "mode": "NULLABLE",
+    "fields": [
+        {"name": "personId", "type": "STRING", "mode": "NULLABLE", "description": "The personId of the person’s direct/immediate manager."}
+    ]
+  }
+]

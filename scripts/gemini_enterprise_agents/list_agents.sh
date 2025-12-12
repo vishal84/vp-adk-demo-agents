@@ -22,10 +22,25 @@ done
 echo "🔍 Fetching list of agents for project '$GOOGLE_CLOUD_PROJECT' and app '$AS_APP'..."
 
 # API call to list agents
-curl -X GET \
+RESPONSE=$(curl -s -X GET \
   -H "Authorization: Bearer $(gcloud auth print-access-token)" \
   -H "Content-Type: application/json" \
   -H "X-Goog-User-Project: $GOOGLE_CLOUD_PROJECT" \
-  "https://discoveryengine.googleapis.com/v1alpha/projects/$GOOGLE_CLOUD_PROJECT/locations/global/collections/default_collection/engines/$AS_APP/assistants/default_assistant/agents"
+  "https://discoveryengine.googleapis.com/v1alpha/projects/$GOOGLE_CLOUD_PROJECT/locations/global/collections/default_collection/engines/$AS_APP/assistants/default_assistant/agents")
 
-echo -e "\n\n✅ Script finished."
+# Format as console readable list using jq
+if echo "$RESPONSE" | jq -e '.agents' > /dev/null; then
+  echo -e "\n--- Agents List ---\n"
+  echo "$RESPONSE" | jq -r '
+    .agents[] | 
+    "Agent ID:     \(.name | split("/") | last)",
+    "Display Name: \(.displayName // "N/A")",
+    "Description:  \(.description // "N/A")",
+    "----------------------------------------"
+  '
+else
+  echo "No agents found or error in response."
+  echo "Raw response: $RESPONSE"
+fi
+
+echo -e "\n✅ Script finished."
