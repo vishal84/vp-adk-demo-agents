@@ -34,4 +34,4 @@ terraform/.terraform.lock.hcl
 !README.md
 
 # Ignore local scripts
-deploy.sh
+*.sh
