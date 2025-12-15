@@ -51,8 +51,7 @@ To do so ensure you are within the folder with the agent code:
 
 1. Run the following command via command line to deploy using the `adk` CLI:
 ```
-uv run adk deploy agent_engine --project=[REPLACE with PROJECT_ID] --region=[REPLACE WITH REGION] --staging_bucket=[REPLACE WITH STAGING BUCKET] --display_name="REPLACE WITH DISPLAY NAME" .
-```
+uv run adk deploy agent_engine --project="gsi-gemini-ent" --region="us-central1" --requirements_file=./agent/requirements.txt --env_file=".env" --trace_to_cloud  --staging_bucket="gs://ge-agent-staging" --display_name="Code Executor Agent" ./agent```
 
 This command will package your ADK agent and deploy it to Agent Engine.
 
