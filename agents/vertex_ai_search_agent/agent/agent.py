@@ -14,7 +14,7 @@ logger = logging.getLogger()
 
 # Configuration
 DATASTORE_ID = os.getenv("FULL_DATASTORE_ID")
-MODEL_ID=os.getenv("MODEL_ID")
+MODEL_ID=os.getenv("MODEL_ID", "gemini-2.5-flash")
 
 root_agent = Agent(
     name="vertex_search_agent",
