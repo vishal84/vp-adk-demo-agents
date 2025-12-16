@@ -1,7 +1,7 @@
 [project]
-name = "code-snippet-agent-adk-web"
+name = "code-snippet-agent"
 version = "0.1.0"
-description = "An ADK agent requiring auth for MCP usage within ADK Web."
+description = "An ADK agent requiring auth for MCP usage within Gemini Enterprise."
 requires-python = ">=3.12"
 dependencies = [
     "google-adk>=1.19.0",
