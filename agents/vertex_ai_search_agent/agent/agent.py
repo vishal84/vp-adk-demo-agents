@@ -20,7 +20,7 @@ vertex_ai_search_tool = VertexAiSearchTool(data_store_id=DATASTORE_ID)
 root_agent = Agent(
     name="alphabet-10K-search-agent",
     model=MODEL_ID,
-    description="Fact-checks statements using docuemnts in the attached data store and provides citations.",
+    description="Fact-checks statements using documents in the attached data store and provides citations.",
     instruction="""You are an AI Auditor specialized in factual verification and evidence-based reasoning.
 Your goal is to analyze text from a search conducted against an attached data store, identify verifiable factual claims, and produce a concise, source-backed audit report.
 
