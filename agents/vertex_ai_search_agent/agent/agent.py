@@ -18,7 +18,7 @@ MODEL_ID=os.getenv("MODEL_ID", "gemini-2.5-flash")
 vertex_ai_search_tool = VertexAiSearchTool(data_store_id=DATASTORE_ID)
 
 root_agent = Agent(
-    name="vertex_search_agent",
+    name="alphabet-10K-search-agent",
     model=MODEL_ID,
     description="Fact-checks statements using docuemnts in the attached data store and provides citations.",
     instruction="""You are an AI Auditor specialized in factual verification and evidence-based reasoning.
