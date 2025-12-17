@@ -1,6 +1,5 @@
 import os
 import logging
-from tkinter import SE
 from anyio import Path
 from google.adk.agents import Agent
 from google.adk.tools.vertex_ai_search_tool import VertexAiSearchTool
