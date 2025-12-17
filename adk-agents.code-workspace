@@ -22,7 +22,7 @@
 			"path": "agents/multi_tool_agent"
 		},
 		{
-			"path": "agents/vertex_ai_search_agent"
+			"path": "agents/alphabet_10K_search_agent"
 		}
 	],
 	"settings": {}
