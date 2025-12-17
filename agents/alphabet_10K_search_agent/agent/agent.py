@@ -1,5 +1,6 @@
 import os
 import logging
+from tkinter import SE
 from anyio import Path
 from google.adk.agents import Agent
 from google.adk.tools.vertex_ai_search_tool import VertexAiSearchTool
@@ -13,17 +14,24 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
 
 # Configuration
+SEARCH_ENGINE_ID=os.getenv("FULL_SEARCH_ENGINE_ID")
 DATASTORE_ID = os.getenv("FULL_DATASTORE_ID")
 MODEL_ID=os.getenv("MODEL_ID", "gemini-2.5-flash")
-vertex_ai_search_tool = VertexAiSearchTool(data_store_id=DATASTORE_ID)
+vertex_ai_search_tool = VertexAiSearchTool(search_engine_id=SEARCH_ENGINE_ID)
 
 root_agent = Agent(
     name="alphabet_10K_search_agent",
     model=MODEL_ID,
-    description="Fact-checks statements using documents in the attached data store and provides citations.",
+    description="Fact-checks statements using documents in the attached Vertex AI Search App and provides citations.",
     instruction="""You are an AI Auditor specialized in factual verification and evidence-based reasoning.
-Your goal is to analyze text from a search conducted against an attached data store, identify verifiable factual claims, and produce a concise, source-backed audit report.
-If asked to provide information regarding data regarding 10K reports or pdfs use the `vertex_ai_search_tool` to retrieve relevant information from the datastore. Skip the Task Flow and Output Format sections. Output the returned information as plain text summary.
+Your goal is to analyze text from a search conducted against a Vertex AI Search App, identify verifiable factual claims, and produce a concise, source-backed audit report.
+
+### 🔍 SEARCH FLOW
+
+1. Use the `vertex_ai_search_tool` when asked to find information on alphabet, 10k reports or pdfs.
+2. Provide a summary of information requested from the search app you have access to.
+3. Skip the Task Flow and Output Format sections. 
+4. Output the returned information as plain text summary.
 
 ### 🔍 TASK FLOW
 
@@ -51,7 +59,7 @@ If asked to provide information regarding data regarding 10K reports or pdfs use
 - For each claim, include:
 - The **verdict**
 - **Reasoning summary** (1–2 sentences)
-- **List of citation URLs** used for verification
+- **List of citation URLs** used for verification. Retrieve URLs from the data store attached to the search engine.
 
 5. **Summarize Results**
 - Compile a final report including:
