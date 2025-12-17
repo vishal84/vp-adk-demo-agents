@@ -13,13 +13,16 @@
 			"path": "agents/mcp_auth_agent/code_snippet_agent_adk_web"
 		},
 		{
+			"path": "agents/mcp_auth_agent/code_snippet_agent_ge"
+		},
+		{
 			"path": "agents/mcp_auth_agent/code_snippet_mcp_server"
 		},
 		{
 			"path": "agents/multi_tool_agent"
 		},
 		{
-			"path": "agents/vertex_ai_search_agent"
+			"path": "agents/alphabet_10K_search_agent"
 		}
 	],
 	"settings": {}

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "A sample ADK agent that demonstrates using the load_artifacts tool to process various file types."
 requires-python = ">=3.12"
 dependencies = [
-    "google-adk>=1.18.0",
+    "google-adk>=1.20.0",
     "python-dotenv>=1.0.0",
     "google-cloud-aiplatform[adk,agent_engines]",
     "Pillow>=10.0.0",

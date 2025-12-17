@@ -35,3 +35,5 @@ terraform/.terraform.lock.hcl
 
 # Ignore local scripts
 deploy.sh
+
+.adk/

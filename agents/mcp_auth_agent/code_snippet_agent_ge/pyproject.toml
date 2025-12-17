@@ -1,11 +1,12 @@
 [project]
-name = "vertex-ai-search-agent"
+name = "code-snippet-agent"
 version = "0.1.0"
-description = "A sample ADK agent that uses Vertex AI Search Tool."
+description = "An ADK agent requiring auth for MCP usage within Gemini Enterprise."
 requires-python = ">=3.12"
 dependencies = [
-    "google-adk>=1.18.0",
+    "google-adk>=1.19.0",
     "python-dotenv>=1.0.0",
+    "google-auth>=2.0.0",
 ]
 
 [tool.uv]

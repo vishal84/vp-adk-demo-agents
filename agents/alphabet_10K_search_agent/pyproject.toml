@@ -1,12 +1,11 @@
 [project]
-name = "code-snippet-agent-adk-web"
+name = "alphabet-10K-search-agent"
 version = "0.1.0"
-description = "An ADK agent requiring auth for MCP usage within ADK Web."
+description = "An agent that can search Alphabet 10K reports and verify claims made against them."
 requires-python = ">=3.12"
 dependencies = [
-    "google-adk>=1.19.0",
+    "google-adk>=1.20.0",
     "python-dotenv>=1.0.0",
-    "google-auth>=2.0.0",
 ]
 
 [tool.uv]
