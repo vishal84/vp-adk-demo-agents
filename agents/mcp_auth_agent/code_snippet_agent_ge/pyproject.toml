@@ -2,7 +2,7 @@
 name = "code-snippet-agent"
 version = "0.1.0"
 description = "An ADK agent requiring auth for MCP usage within Gemini Enterprise."
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     "google-adk>=1.20.0",
     "python-dotenv>=1.0.0",
