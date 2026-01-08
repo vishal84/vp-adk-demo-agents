@@ -2,9 +2,11 @@ import os
 import logging
 from pathlib import Path
 from . import helper
+from . import patch_adk
 
 import google.auth
 import google.auth.transport.requests
+from google.auth.exceptions import DefaultCredentialsError
 import google.oauth2.id_token
 
 from fastapi.openapi.models import OAuth2
@@ -15,8 +17,12 @@ from google.adk.agents import LlmAgent
 from google.adk.auth.auth_credential import AuthCredential
 from google.adk.auth.auth_credential import AuthCredentialTypes
 from google.adk.auth.auth_credential import OAuth2Auth
+from google.adk.auth.auth_credential import AuthCredential, AuthCredentialTypes
+from google.adk.auth.auth_credential import HttpAuth, HttpCredentials
 from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
+
+from fastapi.openapi.models import HTTPBearer
 
 from dotenv import load_dotenv
 
@@ -32,30 +38,40 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "MCP SERVER URL NOT SET")
 SERVICE_ACCOUNT_EMAIL = os.getenv("SERVICE_ACCOUNT_EMAIL")
 
-auth_scheme = OAuth2(
-    flows=OAuthFlows(
-        authorizationCode=OAuthFlowAuthorizationCode(
-            authorizationUrl="https://accounts.google.com/o/oauth2/auth",
-            tokenUrl="https://oauth2.googleapis.com/token",
-            refreshUrl="https://oauth2.googleapis.com/token",
-            scopes={
-                "https://www.googleapis.com/auth/cloud-platform": "Cloud platform scope",
-                "https://www.googleapis.com/auth/userinfo.email": "Email access scope",
-                "https://www.googleapis.com/auth/userinfo.profile": "Profile access scope",
-                "openid": "OpenID Connect scope",
-            },
-        )
-    )
-)
+# auth_scheme = OAuth2(
+#     flows=OAuthFlows(
+#         authorizationCode=OAuthFlowAuthorizationCode(
+#             authorizationUrl="https://accounts.google.com/o/oauth2/auth",
+#             tokenUrl="https://oauth2.googleapis.com/token",
+#             refreshUrl="https://oauth2.googleapis.com/token",
+#             scopes={
+#                 "https://www.googleapis.com/auth/cloud-platform": "Cloud platform scope",
+#                 "https://www.googleapis.com/auth/userinfo.email": "Email access scope",
+#                 "https://www.googleapis.com/auth/userinfo.profile": "Profile access scope",
+#                 "openid": "OpenID Connect scope",
+#             },
+#         )
+#     )
+# )
+
+# auth_credential = AuthCredential(
+#     auth_type=AuthCredentialTypes.OAUTH2,
+#     oauth2=OAuth2Auth(
+#         client_id=CLIENT_ID, 
+#         client_secret=CLIENT_SECRET,
+#         redirect_uri="https://vertexaisearch.cloud.google.com/oauth-redirect",
+#     ),
+# )
+class GeminiEnterpriseHttpAuth(HttpAuth):
+    scheme: str = "ge_auth_resource"
+    credentials: HttpCredentials = HttpCredentials()
+    ge_authentication_resource_auth_id: str
 
 auth_credential = AuthCredential(
-    auth_type=AuthCredentialTypes.OAUTH2,
-    oauth2=OAuth2Auth(
-        client_id=CLIENT_ID, 
-        client_secret=CLIENT_SECRET,
-        redirect_uri="https://vertexaisearch.cloud.google.com/oauth-redirect",
-    ),
+    auth_type=AuthCredentialTypes.HTTP,
+    http=GeminiEnterpriseHttpAuth(ge_authentication_resource_auth_id="code-snippet-auth")
 )
+auth_scheme = HTTPBearer(bearerFormat='JWT')
 
 def get_cloud_run_token(target_url: str) -> str:
     """
