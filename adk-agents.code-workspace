@@ -23,6 +23,9 @@
 		},
 		{
 			"path": "agents/alphabet_10K_search_agent"
+		},
+		{
+			"path": "agents/long_running_agent/long_running_agent"
 		}
 	],
 	"settings": {}

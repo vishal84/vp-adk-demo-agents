@@ -1,0 +1,20 @@
+[project]
+name = "long-running-agent"
+version = "0.1.0"
+description = "An agent that can perform long running tasks and surface results of long running operation."
+requires-python = ">=3.12"
+dependencies = [
+    "google-adk>=1.20.0",
+    "python-dotenv>=1.0.0",
+    "google-cloud-aiplatform[adk,agent_engines]",
+]
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["agent"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
