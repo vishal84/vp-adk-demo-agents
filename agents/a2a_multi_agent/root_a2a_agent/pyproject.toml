@@ -1,0 +1,21 @@
+[project]
+name = "root-a2a-agent"
+version = "0.1.0"
+description = "Root A2A client agent that orchestrates downstream agents with auth propagation"
+requires-python = ">=3.12"
+dependencies = [
+    "google-adk>=1.18.0",
+    "google-cloud-aiplatform[adk,agent_engines]",
+    "python-dotenv>=1.0.0",
+    "httpx>=0.27.0",
+]
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["agent"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
