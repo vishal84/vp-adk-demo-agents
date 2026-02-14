@@ -29,9 +29,6 @@
 		},
 		{
 			"path": "agents/a2a_multi_agent/root_a2a_agent"
-		},
-		{
-			"path": "agents/long_running_agent"
 		}
 	],
 	"settings": {}
