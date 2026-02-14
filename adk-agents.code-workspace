@@ -23,6 +23,12 @@
 		},
 		{
 			"path": "agents/alphabet_10K_search_agent"
+		},
+		{
+			"path": "agents/a2a_multi_agent/downstream_a2a_agent"
+		},
+		{
+			"path": "agents/a2a_multi_agent/root_a2a_agent"
 		}
 	],
 	"settings": {}
